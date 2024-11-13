@@ -1,15 +1,17 @@
-<script>
- import {RouterView} from "vue-router";
-
-</script>
-
 <template>
-  <RouterView/>
+  <v-app>
+   
+      <router-view/>
+
+  </v-app>
 </template>
 
-<style>
-nav {
-  display: flex;
-  gap: 10px;
+<script>
+
+export default {
+  name: 'App',
+  data: () => ({
+ 
+  }),
 }
-</style>
+</script>

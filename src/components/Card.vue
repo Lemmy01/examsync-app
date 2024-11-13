@@ -1,10 +1,12 @@
 <template>
-  <div class="card" @click="handleClick">
-    <div class="card-body">
-      <h5 class="card-title">{{ title }}</h5>
-      <p class="card-text">{{ description }}</p>
-    </div>
-  </div>
+  <v-card @click="handleCardClick">
+    <v-img :src="image" height="200px" />
+    <v-card-title>{{ title }}</v-card-title>
+    <v-card-subtitle>{{ description }}</v-card-subtitle>
+    <v-card-actions>
+      <v-btn color="primary" @click.stop="handleCardClick">Click Me</v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
@@ -22,29 +24,14 @@ export default {
     image: {
       type: String,
       required: true,
-    },
+    }
   },
   methods: {
-    handleClick() {
-      // Emit the 'card-click' event when the card is clicked
+    handleCardClick() {
+      // Emit the title of the card when clicked
       this.$emit('card-click', this.title);
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
-<style scoped>
-.card {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.card:hover {
-  transform: scale(1.05);
-}
-
-.card-img-top {
-  height: 200px;
-  object-fit: cover;
-}
-</style>

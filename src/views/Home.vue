@@ -1,9 +1,7 @@
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
-
-  import Card from '../components/Card.vue';
-  import Sidebar from '../components/sidebar/Sidebar.vue';
-
+  import Sidebar from '@/components/sidebar/Sidebar.vue'; // Import Sidebar component
+  import Card from '@/components/Card.vue';
   export default defineComponent({
     name: 'Home',
     components: {
@@ -48,69 +46,64 @@
           description: 'Description for Card 6',
           image: 'https://via.placeholder.com/150',
         },
-        // More cards as needed
+        {
+          id: 7,
+          title: 'Card 7',
+          description: 'Description for Card 7',
+          image: 'https://via.placeholder.com/150',
+        },
+        {
+          id: 8,
+          title: 'Card 8',
+          description: 'Description for Card 8',
+          image: 'https://via.placeholder.com/150',
+        },
       ]);
 
       const handleCardClick = (title: string) => {
         alert(`Card clicked: ${title}`);
       };
 
+      const drawer = ref(true); // State of the sidebar (open/closed)
+
       return {
         items,
         handleCardClick,
+        drawer,
       };
     },
   });
 </script>
 
-<style scoped>
-.home-page {
-  display: flex;
-}
-
-.main-content {
-  flex: 1;
-  margin-left: 250px; /* Adjust this based on sidebar width */
-  padding: 20px;
-}
-
-.container {
-  max-width: 1200px;
-  width: 100%;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Creates a grid with dynamic number of columns */
-  gap: 20px; /* Space between cards */
-  margin-top: 20px;
-}
-
-.card-wrapper {
-  width: 100%;
-}
-</style>
-
 <template>
-  <div class="home-page">
+  <v-app>
     <!-- Sidebar -->
-    <Sidebar />
+      <!-- Sidebar content can go here -->
+      <Sidebar />
+
 
     <!-- Main Content -->
-    <div class="main-content">
-      <div class="container">
-        <div class="grid">
-          <!-- Loop through items and display each card -->
-          <div class="card-wrapper" v-for="item in items" :key="item.id">
+    <v-main>
+      <v-container>
+        <v-row>
+          <v-col
+            v-for="item in items"
+            :key="item.id"
+            cols="12" md="3"
+          >
             <Card
               :title="item.title"
               :description="item.description"
               :image="item.image"
               @card-click="handleCardClick"
             />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
+
+<style scoped>
+/* Optional: Custom styles if needed */
+</style>

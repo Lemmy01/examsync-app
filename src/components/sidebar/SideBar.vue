@@ -1,62 +1,35 @@
+<template>
+
+      <v-navigation-drawer  v-model="drawer" app>
+        <v-list>
+          <v-list-item
+            prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+            subtitle="sandra_a88@gmailcom"
+            title="Sandra Adams"
+          ></v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav>
+          <v-list-item prepend-icon="mdi-folder" color="primary" title="Login" value="Login" to="/"></v-list-item>
+          <v-list-item prepend-icon="mdi-account-multiple" title="Shared with me" value="shared"></v-list-item>
+          <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
+ 
+  
+</template>
+
 <script>
-import SidebarLink from './SidebarLink.vue'
 
 
 export default {
-  props: {},
-  components: { SidebarLink },
-  setup() {
+  data(){
+   return {
+    drawer: true
+    }
   }
 }
 </script>
-
-<template>
-  <div class="sidebar" :style="{ width: sidebarWidth }">
-    <h1>
-      <span>Vue Sidebar</span>
-    </h1>
-
-    <SidebarLink to="/" icon="fas fa-home">Home</SidebarLink>
-
-
-   
-  </div>
-</template>
-
-<style>
-:root {
-  --sidebar-bg-color: #2f855a;
-  --sidebar-item-hover: #38a169;
-  --sidebar-item-active: #276749;
-}
-</style>
-
-<style scoped>
-.sidebar {
-  color: white;
-  background-color: var(--sidebar-bg-color);
-
-  float: left;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  padding: 0.5em;
-
-  transition: 0.3s ease;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar h1 {
-  height: 2.5em;
-}
-
-
-.rotate-180 {
-  transform: rotate(180deg);
-  transition: 0.2s linear;
-}
-</style>

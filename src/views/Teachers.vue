@@ -3,7 +3,7 @@
   import Sidebar from '@/components/sidebar/Sidebar.vue'; // Import Sidebar component
   import Card from '@/components/Card.vue';
   export default defineComponent({
-    name: 'Home',
+    name: 'TeacherPage',
     components: {
       Sidebar,
       Card,
@@ -12,49 +12,49 @@
       const items = ref([
         {
           id: 1,
-          title: 'Card 1',
+          title: 'Teacher 1',
           description: 'Description for Card 1',
           image: 'https://via.placeholder.com/150',
         },
         {
           id: 2,
-          title: 'Card 2',
+          title: 'Teacher 2',
           description: 'Description for Card 2',
           image: 'https://via.placeholder.com/150',
         },
         {
           id: 3,
-          title: 'Card 3',
+          title: 'Teacher 3',
           description: 'Description for Card 3',
           image: 'https://via.placeholder.com/150',
         },
         {
           id: 4,
-          title: 'Card 4',
+          title: 'Teacher 4',
           description: 'Description for Card 4',
           image: 'https://via.placeholder.com/150',
         },
         {
           id: 5,
-          title: 'Card 5',
+          title: 'Teacher 5',
           description: 'Description for Card 5',
           image: 'https://via.placeholder.com/150',
         },
         {
           id: 6,
-          title: 'Card 6',
+          title: 'Teacher 6',
           description: 'Description for Card 6',
           image: 'https://via.placeholder.com/150',
         },
         {
           id: 7,
-          title: 'Card 7',
+          title: 'Teacher 7',
           description: 'Description for Card 7',
           image: 'https://via.placeholder.com/150',
         },
         {
           id: 8,
-          title: 'Card 8',
+          title: 'Teacher 8',
           description: 'Description for Card 8',
           image: 'https://via.placeholder.com/150',
         },
@@ -77,6 +77,7 @@
 
 <template>
   <v-app>
+    <!-- Main Content -->
     <v-main>
       <v-container>
         <v-row>

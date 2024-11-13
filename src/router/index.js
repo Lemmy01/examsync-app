@@ -37,14 +37,15 @@ const router = createRouter({
   routes,
 });
 
-// Navigation guard for authentication
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('authToken'); // Example auth check
 
+// Aici protejăm rutele care necesită autentificare
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('authToken');
+  console.log(isAuthenticated);
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login');
+    next({ name: 'Login' }); // Dacă nu e autentificat, redirecționează la login
   } else {
-    next();
+    next(); // Permite accesul la ruta
   }
 });
 

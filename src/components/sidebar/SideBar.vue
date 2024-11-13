@@ -27,7 +27,7 @@
         prepend-icon="mdi-folder"
         title="Logout"
         value="logout"
-        to="/login"
+        @click="logout"
       ></v-list-item>
     </v-list>
   </v-navigation-drawer>
@@ -38,8 +38,25 @@
 
 <script>
 
+import { defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
+  setup() {
+    const router = useRouter();
+
+    const logout = () => {
+      // Șterge token-ul de autentificare din localStorage
+      localStorage.removeItem('authToken');
+      
+      // Redirecționează utilizatorul la pagina de login
+      router.push({ name: 'Login' });
+    };
+
+    return {
+      logout,
+    };
+  },
   data(){
    return {
     drawer: true

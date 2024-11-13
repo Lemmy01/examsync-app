@@ -1,11 +1,29 @@
-<script setup lang="ts">
-defineProps<{ 
-	handleLogin: () => Promise<void>;
-}>()
+<script>
+export default {
+  name: 'SubmitButton',
+  props: {
+    handleLogin: {
+      type: Function,
+      required: true,
+    },
+    disabled: {
+      type: Boolean,
+      required: true,
+    },
+  },
+};
 </script>
 
 <template>
-	<v-btn color="primary" @click="handleLogin" type="submit" block class="mt-4">
-	        Submit
-	      </v-btn>
+  <v-btn
+    color="primary"
+    @click="handleLogin"
+    :disabled="disabled"
+  >
+    Login
+  </v-btn>
 </template>
+
+<style scoped>
+/* Custom styles for the button */
+</style>

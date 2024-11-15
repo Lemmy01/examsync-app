@@ -1,8 +1,18 @@
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
+import { fileURLToPath, URL } from 'node:url'
 
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
+
+// https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
+import vuetify from 'vite-plugin-vuetify'
+
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    vueDevTools(),
+  ], 
   server: {
     proxy: {
       // Proxy requests starting with '/api' to the target
@@ -12,6 +22,11 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''), // Removes /api from the URL path
         secure: false, // If the target server uses self-signed certificates, set this to false
       }
-    }
-  }
-});
+    },
+  },
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
+})

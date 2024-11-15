@@ -1,10 +1,10 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/views/Login.vue';
-import Home from '@/views/Home.vue'; // Main page after login
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-import Teachers from '@/views/Teachers.vue';
-import Exams from '@/views/Exams.vue';
+import Teachers from '@/views/student_pages/Teachers.vue';
+import Exams from '@/views/student_pages/Exams.vue';
+import ViewRequests from '@/views/teacher_pages/ViewRequests.vue';
 
 const routes = [
   {
@@ -27,6 +27,16 @@ const routes = [
         name: 'Exams',
         component: Exams,
       },
+      {
+        path: 'view_requests',
+        name: 'ViewRequests',
+        component: ViewRequests,
+      },
+      {
+        path: 'view_assistents',
+        name: 'ViewAssistents',
+        component: ViewRequests,
+      },
       // Add more authenticated routes here
     ],
   },
@@ -41,7 +51,6 @@ const router = createRouter({
 // Aici protejăm rutele care necesită autentificare
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('authToken');
-  console.log(isAuthenticated);
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'Login' }); // Dacă nu e autentificat, redirecționează la login
   } else {

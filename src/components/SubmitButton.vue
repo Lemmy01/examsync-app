@@ -19,6 +19,9 @@ export default {
     color="primary"
     @click="handleLogin"
     :disabled="disabled"
+	type="submit"
+	class="mt-4"
+	block
   >
     Login
   </v-btn>

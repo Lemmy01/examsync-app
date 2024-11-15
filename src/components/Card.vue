@@ -1,8 +1,13 @@
 <template>
-  <v-card @click="handleCardClick">
-    <v-img :src="image" height="200px" />
+  <v-card >
+  
     <v-card-title>{{ title }}</v-card-title>
-    <v-card-subtitle>{{ description }}</v-card-subtitle>
+    <v-card-subtitle>{{ subtitle }}</v-card-subtitle>
+    <v-card-text> {{ description }}</v-card-text>
+    <v-card-actions >
+    <v-btn color="primary" @click="handleCardClick">  {{ butonName }}</v-btn>
+
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -11,8 +16,9 @@ export default {
   name: 'Card',
   props: {
     title: String,
+    subtitle: String,
     description: String,
-    image: String,
+    butonName: String,
   },
   methods: {
     handleCardClick() {

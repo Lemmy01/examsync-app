@@ -3,6 +3,8 @@ import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import InputField from '../components/InputField.vue';
 import SubmitButton from '../components/SubmitButton.vue';
+import axiosInstance  from '@/axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default defineComponent({
   name: 'Login',
@@ -24,7 +26,7 @@ export default defineComponent({
     ];
     const passwordRules = [
       (v) => !!v || 'Password is required',
-      (v) => v.length >= 6 || 'Password must be at least 6 characters long',
+      (v) => v.length >= 4 || 'Password must be at least 6 characters long',
     ];
 
     const handleLogin = async () => {
@@ -39,21 +41,33 @@ export default defineComponent({
         return;
       }
 
-      // Simulate login and store token
       try {
-        // Simulated login (uncomment when using actual API)
-        // const response = await axiosInstance.post('/login', { email: email.value, password: password.value });
-        // if (response.data.token) {
-        //   localStorage.setItem('authToken', response.data.token);
-        //   router.push({ name: 'Teachers' });
-        // }
-
-        // Simulate login success
-        localStorage.setItem('authToken', 'fake_token');
-        router.push({ name: 'Teachers' });
+       const  response= await axiosInstance.post('/login', { username: email.value, parola: password.value });
+       console.log(response.data['Authentication successful']);
+       if (response.data['Authentication successful']) {
+         localStorage.setItem('authToken', response.data['Authentication successful']);
+          const decoded = jwtDecode(response.data['Authentication successful']);
+          console.log(decoded);
+          localStorage.setItem('accountType', decoded.rol);
+          localStorage.setItem('id', decoded.id);
+          switch (decoded.rol) {
+            case 'student':
+              router.push({ name: 'Teachers' });
+              console.log('profesor');
+              break;
+            case 'profesor':
+   
+              router.push({ name: 'ViewRequests' });
+              break;
+            case 'admin':
+            break;
+            default:
+              break;
+          }
+        }
 
       } catch (error) {
-        // Handle any login errors
+        console.log(error);
         errorMessage.value = 'An unexpected error occurred. Please try again.';
       }
     };
@@ -87,6 +101,7 @@ export default defineComponent({
                   type="email"
                   v-model="email"
                   :rules="emailRules"
+                   autocomplete="on"
                 />
 
                 <!-- Password input with validation rules -->
@@ -96,6 +111,7 @@ export default defineComponent({
                   type="password"
                   v-model="password"
                   :rules="passwordRules"
+                   autocomplete="on"
                 />
 
                 <!-- Submit Button -->

@@ -6,73 +6,150 @@
       </v-card-title>
 
       <v-card-text>
-        <v-form ref="form" v-model="formValid">
-          <!-- Nume -->
-          <v-text-field 
-            v-model="name" 
-            label="Name" 
-            required
-            :rules="nameRules"
-          ></v-text-field>
-          
-          <!-- Email -->
-          <v-text-field 
-            v-model="email" 
-            label="Email" 
-            required
-            :rules="emailRules"
-            type="email"
-          ></v-text-field>
-        </v-form>
+        <!-- Date Picker -->
+        <v-date-picker v-model="selectedDate" label="Select Date"></v-date-picker>
+
+        <!-- Subject Select -->
+        <v-select
+          v-model="selectedSubject"
+          label="Select Subject"
+          :items="items"
+          item-title="nume"
+          item-value="id"
+          clearable
+        ></v-select>
+
+        <!-- Error Message -->
+        <v-alert v-if="validationError" type="error" class="mt-3">
+          {{ validationError }}
+        </v-alert>
+
+        <!-- Loading Spinner -->
+        <v-row v-if="loading" justify="center">
+          <v-col cols="auto">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="64"
+              width="4"
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
       </v-card-text>
 
       <v-card-actions>
-        <v-btn text @click="closeDialog">Cancel</v-btn>
-        <v-btn color="primary" @click="submitForm" :disabled="!formValid">Submit</v-btn>
+        <v-btn text @click="closeDialog" :disabled="loading">Cancel</v-btn>
+        <v-btn color="primary" @click="submitForm" :loading="loading" :disabled="loading">Submit</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
+import axiosInstance from '@/axios';
+
 export default {
   name: 'DialogForm',
   props: {
-    modelValue: Boolean, // Controls the visibility of the dialog
+    modelValue: Boolean,
+    profesorId: String,
   },
-  emits: ['update:modelValue', 'submit'], // Emit the 'submit' event
+  emits: ['update:modelValue', 'submit'],
   data() {
     return {
-      dialogVisible: this.modelValue, // Local state to control the dialog visibility
-      name: '',
-      email: '',
-      formValid: false, // Track the form's validity state
-      // Rules for Name field
-      nameRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length >= 3) || 'Name must be at least 3 characters long',
-      ],
-      // Rules for Email field
-      emailRules: [
-        v => !!v || 'Email is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-      ],
+      selectedDate: null,
+      selectedSubject: null,
+      dialogVisible: this.modelValue,
+      items: [],
+      loading: false,
+      validationError: '',
+      dataFetched: false, // Track if data has been fetched to prevent redundant calls
     };
   },
   watch: {
     modelValue(newValue) {
       this.dialogVisible = newValue;
+
+      // Call fetchData only if dialog is opening and data hasn’t been fetched yet
+      if (newValue && !this.dataFetched) {
+        this.fetchData();
+      }
     },
   },
   methods: {
-    submitForm() {
-      const formData = { name: this.name, email: this.email };
-      this.$emit('submit', formData); // Emit the form data
-      this.$emit('update:modelValue', false); // Close the dialog
+    async fetchData() {
+      this.loading = true;
+      try {
+        const response = await axiosInstance.get(`/materii/${this.profesorId}`);
+
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          this.items = response.data.map((item) => ({
+            id: item.subjectId,
+            nume: item.nume,
+          }));
+        } else {
+          console.warn('No subjects found for the provided professor ID.');
+          this.items = [];
+        }
+
+        this.dataFetched = true; // Mark data as fetched
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        this.items = [];
+      } finally {
+        this.loading = false;
+      }
     },
+
+    async submitForm() {
+      this.validationError = '';
+
+      if (!this.selectedDate) {
+        this.validationError = 'Please select a date.';
+        return;
+      }
+      if (!this.selectedSubject) {
+        this.validationError = 'Please select a subject.';
+        return;
+      }
+
+      this.loading = true;
+      const formData = {
+        data: this.selectedDate,
+        materieid: this.selectedSubject,
+        sefid: localStorage.getItem('id'),
+        profesorid: this.profesorId,
+      };
+
+      try {
+        const response = await axiosInstance.post('/examen', formData);
+        if (response.status === 200 || response.status === 201) {
+          this.$emit('submit', formData);
+          this.closeDialog();
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        this.validationError = 'Failed to submit the form. Please try again.';
+      } finally {
+        this.loading = false;
+      }
+    },
+
     closeDialog() {
-      this.$emit('update:modelValue', false); // Close the dialog
+      this.resetForm();
+      this.$emit('update:modelValue', false);
+    },
+
+    resetForm() {
+      this.selectedDate = null;
+      this.selectedSubject = null;
+      this.validationError = '';
+      this.dataFetched = false; // Reset dataFetched so data can be fetched again next time
     },
   },
 };
 </script>
+
+<style scoped>
+/* Optionally, you can add styles here */
+</style>

@@ -1,10 +1,12 @@
 <template>
-  <v-card @click="handleCardClick">
-    <v-img :src="image" height="200px" />
+  <v-card >
+  
     <v-card-title>{{ title }}</v-card-title>
-    <v-card-subtitle>{{ description }}</v-card-subtitle>
-    <v-card-actions>
-      <v-btn color="primary" @click.stop="handleCardClick">Click Me</v-btn>
+    <v-card-subtitle>{{ subtitle }}</v-card-subtitle>
+    <v-card-text> {{ description }}</v-card-text>
+    <v-card-actions >
+    <v-btn color="primary" @click="handleCardClick">  {{ butonName }}</v-btn>
+
     </v-card-actions>
   </v-card>
 </template>
@@ -13,25 +15,15 @@
 export default {
   name: 'Card',
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-    image: {
-      type: String,
-      required: true,
-    }
+    title: String,
+    subtitle: String,
+    description: String,
+    butonName: String,
   },
   methods: {
     handleCardClick() {
-      // Emit the title of the card when clicked
-      this.$emit('card-click', this.title);
-    }
-  }
-}
+      this.$emit('card-click');  // Emit the event to trigger the dialog
+    },
+  },
+};
 </script>
-

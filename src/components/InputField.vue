@@ -1,53 +1,45 @@
-<script lang="ts">
-import { defineComponent, ref, PropType } from 'vue';
+<!-- src/components/TextInput.vue -->
+<template>
+  <v-text-field
+    :label="label"
+    v-model="inputValue"
+    :rules="rules"
+    outlined
+    color="primary"
+  ></v-text-field>
+</template>
 
-export default defineComponent({
-  name: 'InputField',
+<script>
+import { ref, watch } from 'vue';
+
+export default {
+  name: 'TextInput',
   props: {
-    id: {
-      type: String,
-      required: true,
-    },
     label: {
       type: String,
-      required: true,
-    },
-    type: {
-      type: String as PropType<'text' | 'email' | 'password'>,
-      default: 'text',
+      default: 'Enter text',
     },
     modelValue: {
       type: String,
       default: '',
+    },
+    rules: {
+      type: Array,
+      default: () => [],
     },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const inputValue = ref(props.modelValue);
 
-    const updateValue = () => {
-      emit('update:modelValue', inputValue.value);
-    };
+    watch(inputValue, (newValue) => {
+      emit('update:modelValue', newValue);
+    });
 
     return {
       inputValue,
-      updateValue,
     };
   },
-});
+};
 </script>
 
-<style scoped>
-.input-group {
-  margin-bottom: 1rem;
-}
-</style>
-
-
-<template>
-    <div class="input-group">
-      <label :for="id">{{ label }}</label>
-      <input :type="type" :id="id" v-model="inputValue" @input="updateValue" required />
-    </div>
-  </template>
-  

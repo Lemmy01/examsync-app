@@ -1,33 +1,32 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
+<script>
+export default {
   name: 'SubmitButton',
   props: {
-    text: {
-      type: String,
-      default: 'Submit',
+    handleLogin: {
+      type: Function,
+      required: true,
+    },
+    disabled: {
+      type: Boolean,
+      required: true,
     },
   },
-});
+};
 </script>
 
-<style scoped>
-.submit-button {
-  padding: 0.5rem 1rem;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-</style>
-
-
 <template>
-    <button type="submit" class="submit-button">
-      {{ text }}
-    </button>
-  </template>
-  
- 
+  <v-btn
+    color="primary"
+    @click="handleLogin"
+    :disabled="disabled"
+	type="submit"
+	class="mt-4"
+	block
+  >
+    Login
+  </v-btn>
+</template>
+
+<style scoped>
+/* Custom styles for the button */
+</style>

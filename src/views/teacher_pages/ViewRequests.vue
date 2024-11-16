@@ -13,6 +13,7 @@ export default {
     return {
       items: [], // Initialize items as an empty array
       dialogVisible: false, // Manage dialog visibility
+      isLoading: true, // Track loading state
 
     };
   },
@@ -21,7 +22,11 @@ export default {
   },
  
   methods: {
+    handleCardClick(itemId) {
+      this.$router.push({ name: 'FillRequests', });
+    },
     async fetchData() {
+      this.isLoading = true;
       try {
         const id = localStorage.getItem('id');
         const response = await axiosInstance.get('/examen/' + id);
@@ -29,12 +34,11 @@ export default {
       
        for( var i = 0; i < response.data.length; i++ )
          {
-            const student = await axiosInstance.get('/user/info/' + response.data[i].sefid);
+            const student = await response.data[i].sef;
             const materie = response.data[i].materie;
-            console.log(student.data);
            this.items.push({
             numeMaterie: materie.nume,
-            numeElev: student.data.nume,
+            numeElev: student.nume,
             id: response.data[i].id,
             data: response.data[i].data,
            });
@@ -43,6 +47,7 @@ export default {
       } catch (error) {
         console.error('Error fetching data:', error);
       }
+      this.isLoading = false;
     },
     
   },
@@ -55,7 +60,20 @@ export default {
   <v-app>
     <!-- Main Content -->
     <v-main>
-      <v-container>
+      <v-container v-if="isLoading">
+        <v-row justify="center">
+          <v-col cols="auto">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="64"
+              width="4"
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-container>
+ 
+      <v-container v-if="!isLoading">
         <v-row>
           <v-col
             v-for="item in items"
@@ -68,7 +86,7 @@ export default {
               :subtitle="item.numeElev"
               :description="item.data"
               :buton-name="'Check out'"
-              @card-click=""
+              @card-click="handleCardClick(item.id)"
             />
           </v-col>
         </v-row>

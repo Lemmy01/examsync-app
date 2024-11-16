@@ -6,6 +6,11 @@
     components: {
       Card,
     },
+    data() {
+      return {
+        isLoading: true, // Track loading state
+      };
+    },
     setup() {
       const items = ref([
         {
@@ -77,7 +82,20 @@
   <v-app>
     <!-- Main Content -->
     <v-main>
-      <v-container>
+      <v-container v-if="isLoading">
+        <v-row justify="center">
+          <v-col cols="auto">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="64"
+              width="4"
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-container>
+ 
+      <v-container v-if="!isLoading">
         <v-row>
           <v-col
             v-for="item in items"

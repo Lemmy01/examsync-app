@@ -39,6 +39,12 @@
         value="view_requests"
         to="/view_requests"
       ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="View Assistents"
+        value="view_asistenti"
+        to="/view_assistents"
+      ></v-list-item>
      
   
         </template>

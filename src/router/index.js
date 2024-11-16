@@ -5,6 +5,8 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 import Teachers from '@/views/student_pages/Teachers.vue';
 import Exams from '@/views/student_pages/Exams.vue';
 import ViewRequests from '@/views/teacher_pages/ViewRequests.vue';
+import FillRequest from '@/views/teacher_pages/FillRequest.vue';
+import ViewAssistents from '@/views/teacher_pages/ViewAssistents.vue';
 
 const routes = [
   {
@@ -35,7 +37,12 @@ const routes = [
       {
         path: 'view_assistents',
         name: 'ViewAssistents',
-        component: ViewRequests,
+        component: ViewAssistents,
+      },
+      {
+        path: 'fill_requests',
+        name: 'FillRequests',
+        component: FillRequest,
       },
       // Add more authenticated routes here
     ],

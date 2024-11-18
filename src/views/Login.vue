@@ -47,7 +47,7 @@ export default defineComponent({
        if (response.data['Authentication successful']) {
          localStorage.setItem('authToken', response.data['Authentication successful']);
           const decoded = jwtDecode(response.data['Authentication successful']);
-          console.log(decoded);
+          console.log(response.data['Authentication successful']);
           localStorage.setItem('accountType', decoded.rol);
           localStorage.setItem('id', decoded.id);
           switch (decoded.rol) {

@@ -5,7 +5,7 @@ import axiosInstance  from '@/axios';
 import { jwtDecode } from 'jwt-decode';
 
 export default {
-  name: 'ViewRequests',
+  name: 'ViewApprovedExams',
   components: {
     Card,
     DialogForm,
@@ -25,7 +25,6 @@ export default {
  
   methods: {
     handleCardClick(data,id) {
-      console.log(id);
       this.$router.push({ name: 'FillRequests',params: { date: data ,id: id}  });
     },
     async fetchData() {
@@ -35,7 +34,8 @@ export default {
         const teacher = jwtDecode(authToken);
         const id = teacher.id;
         console.log(id);
-        const response = await axiosInstance.get('/examen/' + id);
+        const response = await axiosInstance.get('/examen/programate/' + id);
+        console.log(response.data);
       
        for( var i = 0; i < response.data.length; i++ )
          {
@@ -46,6 +46,8 @@ export default {
             numeElev: student.nume,
             id: response.data[i].id,
             data: response.data[i].data,
+            oraStart: response.data[i].orastart,
+            oraStop: response.data[i].orafinal,
            });
          }
           
@@ -88,12 +90,10 @@ export default {
             cols="12"  md="6" lg="5" xl="3"
           >
             <Card
-         
-             :title="item.numeMaterie"
+              :title="item.numeMaterie"
               :subtitle="item.numeElev"
-              :description="item.data"
-              :buton-name="'Check out'"
-              @card-click="handleCardClick(item.data,item.id)"
+              :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"      
+              :buton-name="'Check out'"             
             />
           </v-col>
         </v-row>

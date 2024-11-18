@@ -7,6 +7,7 @@ import Exams from '@/views/student_pages/Exams.vue';
 import ViewRequests from '@/views/teacher_pages/ViewRequests.vue';
 import FillRequest from '@/views/teacher_pages/FillRequest.vue';
 import ViewAssistents from '@/views/teacher_pages/ViewAssistents.vue';
+import ViewApprovedExams from '@/views/teacher_pages/ViewApprovedExams.vue';
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
         component: Exams,
       },
       {
+        path: 'view_approved_exams',
+        name: 'ViewApprovedExams',
+        component: ViewApprovedExams,
+      },
+      {
         path: 'view_requests',
         name: 'ViewRequests',
         component: ViewRequests,
@@ -40,9 +46,11 @@ const routes = [
         component: ViewAssistents,
       },
       {
-        path: 'fill_requests',
+        path: 'fill-request/:date?/:id?',
         name: 'FillRequests',
         component: FillRequest,
+        props: true, // Activează transmiterea route parameters ca prop-uri
+
       },
       // Add more authenticated routes here
     ],

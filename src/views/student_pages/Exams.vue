@@ -1,82 +1,69 @@
-<script lang="ts">
-  import { defineComponent, ref } from 'vue';
-  import Card from '@/components/Card.vue';
-  export default defineComponent({
-    name: 'TeacherPage',
-    components: {
-      Card,
-    },
-    data() {
-      return {
-        isLoading: true, // Track loading state
-      };
-    },
-    setup() {
-      const items = ref([
-        {
-          id: 1,
-          title: 'Exam 1',
-          description: 'Description for Card 1',
-          image: 'https://via.placeholder.com/150',
-        },
-        {
-          id: 2,
-          title: 'Exam 2',
-          description: 'Description for Card 2',
-          image: 'https://via.placeholder.com/150',
-        },
-        {
-          id: 3,
-          title: 'Exam 3',
-          description: 'Description for Card 3',
-          image: 'https://via.placeholder.com/150',
-        },
-        {
-          id: 4,
-          title: 'Exam 4',
-          description: 'Description for Card 4',
-          image: 'https://via.placeholder.com/150',
-        },
-        {
-          id: 5,
-          title: 'Exam 5',
-          description: 'Description for Card 5',
-          image: 'https://via.placeholder.com/150',
-        },
-        {
-          id: 6,
-          title: 'Exam 6',
-          description: 'Description for Card 6',
-          image: 'https://via.placeholder.com/150',
-        },
-        {
-          id: 7,
-          title: 'Exam 7',
-          description: 'Description for Card 7',
-          image: 'https://via.placeholder.com/150',
-        },
-        {
-          id: 8,
-          title: 'Exam 8',
-          description: 'Description for Card 8',
-          image: 'https://via.placeholder.com/150',
-        },
-      ]);
+<script>
+import Card from '@/components/Card.vue';
+import DialogForm from '@/components/DialogForm.vue';
+import axiosInstance  from '@/axios';
+import { jwtDecode } from 'jwt-decode';
 
-      const handleCardClick = (title: string) => {
-        alert(`Card clicked: ${title}`);
-      };
+export default {
+  name: 'Exams',
+  components: {
+    Card,
+    DialogForm,
+  },
 
-      const drawer = ref(true); // State of the sidebar (open/closed)
+  data() {
+    return {
+      items: [], // Initialize items as an empty array
+      dialogVisible: false, // Manage dialog visibility
+      isLoading: true, // Track loading state
 
-      return {
-        items,
-        handleCardClick,
-        drawer,
-      };
+    };
+  },
+  async created(){
+  await  this.fetchData();
+  },
+ 
+  methods: {
+    handleCardClick(data,id) {
+      this.$router.push({ name: 'FillRequests',params: { date: data ,id: id}  });
     },
-  });
+    async fetchData() {
+      this.isLoading = true;
+      try {
+   
+        const id = localStorage.getItem('id');
+
+        const student = await axiosInstance.get('/user/info/' + id);
+        console.log(student.data);
+        const response = await axiosInstance.get('/examen/grupaexamene/' + student.data.idgrupa);
+      
+       for( var i = 0; i < response.data.length; i++ )
+         {
+            const student = await response.data[i].sef;
+            const materie = response.data[i].materie;
+            this.items.push({
+            numeMaterie: materie.nume,
+            numeElev: student.nume,
+            id: response.data[i].id,
+            data: response.data[i].data,
+            oraStart: response.data[i].orastart,
+            oraStop: response.data[i].orafinal,
+           });
+         }
+          
+     
+         
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+      this.isLoading = false;
+    },
+    
+  },
+};
 </script>
+
+
 
 <template>
   <v-app>
@@ -100,13 +87,13 @@
           <v-col
             v-for="item in items"
             :key="item.id"
-            cols="12" md="3"
+            cols="12"  md="6" lg="5" xl="3"
           >
-            <Card
-              :title="item.title"
-              :subtitle="item.description"
-              :image="item.image"
-              @card-click="handleCardClick"
+            <Card   
+             :title="item.numeMaterie"
+              :subtitle="item.numeElev"
+              :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"
+              :buton-name="'Check out'"
             />
           </v-col>
         </v-row>

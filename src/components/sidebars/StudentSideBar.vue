@@ -1,7 +1,9 @@
 
 
 <template>
-  <v-navigation-drawer app v-model="drawer">
+  <v-navigation-drawer  expand-on-hover
+  rail permanent="true"
+ >
     <v-list>
       <!-- Profile Information -->
       <v-list>

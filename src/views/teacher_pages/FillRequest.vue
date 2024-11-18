@@ -1,6 +1,6 @@
 <template>
     
-      <v-card>
+      <v-card class="pa-4">
         <v-card-title>
           <span class="headline">Teacher Form</span>
         </v-card-title>
@@ -45,9 +45,12 @@
         </v-card-text>
   
         <v-card-actions>
-          <v-btn text @click="closeDialog" :disabled="loading">Cancel</v-btn>
-          <v-btn color="primary" @click="submitForm" :loading="loading" :disabled="loading">Submit</v-btn>
-        </v-card-actions>
+          <v-row justify="end">
+            <v-btn text @click="closeDialog" :disabled="loading">Cancel</v-btn>
+            <v-btn color="primary" @click="submitForm" :loading="loading" :disabled="loading">Submit</v-btn>
+ 
+          </v-row>
+              </v-card-actions>
       </v-card>
   </template>
   
@@ -62,7 +65,7 @@
     data() {
       return {
         selectedClass: null,
-        pickAsistent: null,
+        selectedAsistent: null,
         assistents: [],
         sali: [],
         loading: false,
@@ -77,9 +80,15 @@
       async fetchData() {
         this.loading = true;
         try {
+         
           const id =  localStorage.getItem('id');
-            const request =await axiosInstance.get('/asistenti/' + id);
-            console.log(request);
+          const request =await axiosInstance.get('/asistenti/' + id);         
+     
+          for( var i = 0; i < request.data.length; i++ )
+            {
+              this.assistents.push(request.data[i]);
+            }
+    
          
           this.dataFetched = true; // Mark data as fetched
 
@@ -94,12 +103,12 @@
       async submitForm() {
         this.validationError = '';
   
-        if (!this.selectedDate) {
-          this.validationError = 'Please select a date.';
+        if (!this.selectedAsistent) {
+          this.validationError = 'Please select a assistent.';
           return;
         }
         if (!this.selectedClass) {
-          this.validationError = 'Please select a subject.';
+          this.validationError = 'Please select a class.';
           return;
         }
   

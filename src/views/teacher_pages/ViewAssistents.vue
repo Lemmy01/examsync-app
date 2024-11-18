@@ -26,16 +26,13 @@ export default {
       try {
 
         const id =  localStorage.getItem('id');
-        const request =await axiosInstance.get('/asistenti/' + id);
-        console.log(request);
-         
+        const request =await axiosInstance.get('/asistenti/' + id);         
      
-      //  for( var i = 0; i < response.data.length; i++ )
-      //    {
-      //      this.items.push(response.data[i]);
-      //    }
-         
-      //    console.log(this.items);
+       for( var i = 0; i < request.data.length; i++ )
+         {
+           this.items.push(request.data[i]);
+         }
+    
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -75,13 +72,14 @@ export default {
           <v-col
             v-for="item in this.items"
             :key="item.id"
-            cols="12" md="3"
+                 cols="12"  md="5" lg="4" xl="3"
           >
             <Card
-              :title="item.title"
-              :subtitle="item.description"
-              :image="item.image"
-              @card-click="handleCardClick"
+              :title="item.nume"
+              :subtitle="item.telefon"
+              :description="item.departament"
+              :buton-name="'Delete'"
+              @card-click=""
             />
           </v-col>
         </v-row>

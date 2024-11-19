@@ -1,18 +1,20 @@
 <script>
 import Card from '@/components/Card.vue';
-import DialogForm from '@/components/DialogForm.vue';
 import axiosInstance  from '@/axios';
+import AddAssistentDialog from '@/components/AddAssistentDialog.vue';
 
 export default {
   name: 'ViewAssistents',
   components: {
     Card,
-    DialogForm,
+    AddAssistentDialog,
+
   },
   data() {
     return {
       items: [], // Initialize items as an empty array
       dialogVisible: false, // Manage dialog visibility
+      isLoading: false,
     };
   },
   async created(){
@@ -20,23 +22,24 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.isLoading = true;
       try {
-        const id = localStorage.getItem('id');
-        const response = await axiosInstance.get('/examen/' + id);
-        console.log(response.data);
-      
-       for( var i = 0; i < response.data.length; i++ )
+
+        const id =  localStorage.getItem('id');
+        const request =await axiosInstance.get('/asistenti/' + id);         
+     
+       for( var i = 0; i < request.data.length; i++ )
          {
-           this.items.push(response.data[i]);
+           this.items.push(request.data[i]);
          }
-         
-         console.log(this.items);
+    
 
       } catch (error) {
         console.error('Error fetching data:', error);
+        this.items = [];
       }
-    },
-    
+      this.isLoading = false;
+    }, 
   },
 };
 </script>
@@ -47,21 +50,41 @@ export default {
   <v-app>
     <!-- Main Content -->
     <v-main>
-      <v-container>
+      <v-container v-if="isLoading">
+        <v-row justify="center">
+          <v-col cols="auto">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="64"
+              width="4"
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-container v-if="!isLoading">
+        <v-row justify="end">
+          <v-btn color="primary" @click="dialogVisible = true">
+            Add New Asistent
+          </v-btn>
+        </v-row>
         <v-row>
           <v-col
             v-for="item in this.items"
             :key="item.id"
-            cols="12" md="3"
+                 cols="12"  md="5" lg="4" xl="3"
           >
             <Card
-              :title="item.title"
-              :subtitle="item.description"
-              :image="item.image"
-              @card-click="handleCardClick"
+              :title="item.nume"
+              :subtitle="item.telefon"
+              :description="item.departament"
+              :buton-name="'Delete'"
+              @card-click=""
             />
           </v-col>
         </v-row>
+        <AddAssistentDialog  v-model="dialogVisible"  
+     />
       </v-container>
     </v-main>
   </v-app>

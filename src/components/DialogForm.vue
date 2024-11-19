@@ -77,6 +77,18 @@ export default {
     },
   },
   methods: {
+
+    convertToIsoDate(dateString) {
+    // Parsează data folosind obiectul Date
+    const date = new Date(dateString);
+
+    // Formatează în YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Luna începe de la 0
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  },
     async fetchData() {
       this.loading = true;
       try {
@@ -103,7 +115,7 @@ export default {
 
     async submitForm() {
       this.validationError = '';
-
+      console.log( this.convertToIsoDate(this.selectedDate))
       if (!this.selectedDate) {
         this.validationError = 'Please select a date.';
         return;
@@ -115,14 +127,15 @@ export default {
 
       this.loading = true;
       const formData = {
-        data: this.selectedDate,
+        data: this.convertToIsoDate(this.selectedDate),
         materieid: this.selectedSubject,
         sefid: localStorage.getItem('id'),
         profesorid: this.profesorId,
       };
+    
 
       try {
-        const response = await axiosInstance.post('/examen', formData);
+        const response = await axiosInstance.post('/examen/programaeazastudent', formData);
         if (response.status === 200 || response.status === 201) {
           this.$emit('submit', formData);
           this.closeDialog();

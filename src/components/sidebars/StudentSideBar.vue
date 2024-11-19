@@ -1,14 +1,16 @@
 
 
 <template>
-  <v-navigation-drawer app v-model="drawer">
+  <v-navigation-drawer  expand-on-hover
+  rail permanent
+ >
     <v-list>
       <!-- Profile Information -->
       <v-list>
       <v-list-item
         prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-        subtitle="sandra_a88@gmail.com"
-        title="Sandra Adams"
+        :subtitle='this.email'
+        :title='this.name'
       ></v-list-item>
     </v-list>
 
@@ -39,8 +41,19 @@
         value="view_requests"
         to="/view_requests"
       ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="View Assistents"
+        value="view_asistenti"
+        to="/view_assistents"
+      ></v-list-item>
      
-  
+      <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="View Exams"
+        value="view_exams"
+        to="/view_approved_exams"
+      ></v-list-item>
         </template>
 
         <template v-else-if="type === 'admin'">
@@ -61,6 +74,8 @@
 </template>
 
 <script>
+import axiosInstance from '@/axios';
+import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -70,6 +85,9 @@ export default {
         required: true,
       },
     },
+  created() {
+     this.fetchData();
+   },
   setup() {
     const router = useRouter();
 
@@ -81,14 +99,30 @@ export default {
       // Redirecționează utilizatorul la pagina de login
       router.push({ name: 'Login' });
     };
-
     return {
       logout,
     };
   },
+  methods: {
+    async fetchData() {
+      try {
+        const authToken = localStorage.getItem('authToken');
+        const id = localStorage.getItem('id');
+        const data = jwtDecode(authToken)
+        const resonse = await axiosInstance.get('/user/info/' + id);
+        this.name = resonse.data.nume;
+        this.email = data.email;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  },
+  
   data(){
    return {
-    drawer: true
+    drawer: true,
+    name: null,
+    email: null,
     }
   }
 }

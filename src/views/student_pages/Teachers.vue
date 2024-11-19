@@ -1,8 +1,21 @@
 <template>
   <v-app>
     <!-- Main Content -->
-    <v-main>
-      <v-container>
+    <v-main> 
+     <v-container v-if="isLoading">
+        <v-row justify="center">
+          <v-col cols="auto">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="64"
+              width="4"
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-container>
+   
+      <v-container v-if="!isLoading">
         <v-row>
           <v-col
             v-for="item in items"
@@ -44,6 +57,7 @@ export default {
   data() {
     return {
       items: [], // Array of items with each item holding its own dialog visibility
+      isLoading: false, 
     };
   },
   async created() {
@@ -51,6 +65,7 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.isLoading = true;
       try {
         const response = await axiosInstance.get('/profesor');
         
@@ -61,6 +76,8 @@ export default {
         }));
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally{
+        this.isLoading = false;
       }
     },
   },

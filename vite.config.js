@@ -4,9 +4,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
-// https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
-import vuetify from 'vite-plugin-vuetify'
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -17,7 +14,7 @@ export default defineConfig({
     proxy: {
       // Proxy requests starting with '/api' to the target
       '/api': {
-        target: 'https://ipgrupa4echipa1-b4acchb9bfcnfzfc.francecentral-01.azurewebsites.net',
+        target: 'https://ipgrupa4echipa1-b4acchb9bfcnfzfc.northeurope-01.azurewebsites.net/',
         changeOrigin: true, // Ensures the host header matches the target
         rewrite: (path) => path.replace(/^\/api/, ''), // Removes /api from the URL path
         secure: false, // If the target server uses self-signed certificates, set this to false

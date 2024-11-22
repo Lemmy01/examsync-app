@@ -1,74 +1,76 @@
 <script>
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import InputField from '../components/InputField.vue';
-import SubmitButton from '../components/SubmitButton.vue';
-import axiosInstance  from '@/axios';
-import { jwtDecode } from 'jwt-decode';
+import { defineComponent, ref } from "vue";
+import { useRouter } from "vue-router";
+import InputField from "../components/InputField.vue";
+import SubmitButton from "../components/SubmitButton.vue";
+import axiosInstance from "@/axios";
+import { jwtDecode } from "jwt-decode";
 
 export default defineComponent({
-  name: 'Login',
+  name: "Login",
   components: {
     InputField,
-    SubmitButton
+    SubmitButton,
   },
   setup() {
-    const email = ref('');
-    const password = ref('');
+    const email = ref("");
+    const password = ref("");
     const errorMessage = ref(null);
     const isFormValid = ref(false);
     const router = useRouter();
 
     // Validation rules
     const emailRules = [
-      (v) => !!v || 'Email is required',
-      (v) => /.+@.+\..+/.test(v) || 'Email must be valid',
+      (v) => !!v || "Email is required",
+      (v) => /.+@.+\..+/.test(v) || "Email must be valid",
     ];
     const passwordRules = [
-      (v) => !!v || 'Password is required',
-      (v) => v.length >= 4 || 'Password must be at least 6 characters long',
+      (v) => !!v || "Password is required",
+      (v) => v.length >= 4 || "Password must be at least 6 characters long",
     ];
 
     const handleLogin = async () => {
       // Reset the error message on each attempt
       errorMessage.value = null;
 
-      const isValid = emailRules.every(rule => rule(email.value) === true) &&
-                      passwordRules.every(rule => rule(password.value) === true);
+      const isValid =
+        emailRules.every((rule) => rule(email.value) === true) &&
+        passwordRules.every((rule) => rule(password.value) === true);
 
       if (!isValid) {
-        errorMessage.value = 'Please fix the errors above.';
+        errorMessage.value = "Please fix the errors above.";
         return;
       }
 
       try {
-       const  response= await axiosInstance.post('/login', { username: email.value, parola: password.value });
-       console.log(response.data['Authentication successful']);
-       if (response.data['Authentication successful']) {
-         localStorage.setItem('authToken', response.data['Authentication successful']);
-          const decoded = jwtDecode(response.data['Authentication successful']);
-          console.log(response.data['Authentication successful']);
-          localStorage.setItem('accountType', decoded.rol);
-          localStorage.setItem('id', decoded.id);
+        const response = await axiosInstance.post("/login", {
+          username: email.value,
+          parola: password.value,
+        });
+        if (response.data["Authentication successful"]) {
+          localStorage.setItem("authToken", response.data["Authentication successful"]);
+          const decoded = jwtDecode(response.data["Authentication successful"]);
+          localStorage.setItem("accountType", decoded.rol);
+          localStorage.setItem("id", decoded.id);
+          console.log(decoded.rol);
           switch (decoded.rol) {
-            case 'student':
-              router.push({ name: 'Teachers' });
-              console.log('profesor');
+            case "student":
+              router.push({ name: "Teachers" });
+              console.log("profesor");
               break;
-            case 'profesor':
-   
-              router.push({ name: 'ViewRequests' });
+            case "profesor":
+              router.push({ name: "ViewRequests" });
               break;
-            case 'admin':
-            break;
+            case "secretar":
+              router.push({ name: "CreateTeachers" });
+              break;
             default:
               break;
           }
         }
-
       } catch (error) {
         console.log(error);
-        errorMessage.value = 'An unexpected error occurred. Please try again.';
+        errorMessage.value = "An unexpected error occurred. Please try again.";
       }
     };
 
@@ -101,7 +103,7 @@ export default defineComponent({
                   type="email"
                   v-model="email"
                   :rules="emailRules"
-                   autocomplete="on"
+                  autocomplete="on"
                 />
 
                 <!-- Password input with validation rules -->
@@ -111,11 +113,11 @@ export default defineComponent({
                   type="password"
                   v-model="password"
                   :rules="passwordRules"
-                   autocomplete="on"
+                  autocomplete="on"
                 />
 
                 <!-- Submit Button -->
-                <SubmitButton :handleLogin="handleLogin" :disabled="!isFormValid" />
+                <SubmitButton :handleLogin="handleLogin" :disabled="!isFormValid" :text="'Login'" />
 
                 <!-- Error message if there's any validation failure -->
                 <v-alert v-if="errorMessage" type="error" dense>

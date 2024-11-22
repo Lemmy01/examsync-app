@@ -56,9 +56,19 @@
       ></v-list-item>
         </template>
 
-        <template v-else-if="type === 'admin'">
-      
-  
+        <template v-else-if="type === 'secretar'">
+          <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="Create Teacher"
+        value="create_teacher"
+        to="/create_teachers"
+      ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="Create Students"
+        value="create_students"
+        to="/create_students"
+      ></v-list-item>
         </template>
 
         <!-- Logout Button (common for all users) -->
@@ -72,6 +82,7 @@
     </v-list>
   </v-navigation-drawer>
 </template>
+
 
 <script>
 import axiosInstance from '@/axios';

@@ -2,12 +2,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/views/Login.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-import Teachers from '@/views/student_pages/Teachers.vue';
-import Exams from '@/views/student_pages/Exams.vue';
-import ViewRequests from '@/views/teacher_pages/ViewRequests.vue';
-import FillRequest from '@/views/teacher_pages/FillRequest.vue';
-import ViewAssistents from '@/views/teacher_pages/ViewAssistents.vue';
-import ViewApprovedExams from '@/views/teacher_pages/ViewApprovedExams.vue';
+import Teachers from '@/views/student/Teachers.vue';
+import Exams from '@/views/student/Exams.vue';
+import ViewRequests from '@/views/teacher/ViewRequests.vue';
+import FillRequest from '@/views/teacher/FillRequest.vue';
+import ViewAssistents from '@/views/teacher/ViewAssistents.vue';
+import ViewApprovedExams from '@/views/teacher/ViewApprovedExams.vue';
+import CreateTeachers from '@/views/secretariat/CreateTeachers.vue';
+import CreateStudents from '@/views/secretariat/CreateStudent.vue';
 
 const routes = [
   {
@@ -46,11 +48,20 @@ const routes = [
         component: ViewAssistents,
       },
       {
+        path: 'create_teachers',
+        name: 'CreateTeachers',
+        component: CreateTeachers,
+      },
+      {
+        path: 'create_students',
+        name: 'CreateStudents',
+        component: CreateStudents,
+      },
+      {
         path: 'fill-request/:date?/:id?',
         name: 'FillRequests',
         component: FillRequest,
         props: true, // Activează transmiterea route parameters ca prop-uri
-
       },
       // Add more authenticated routes here
     ],

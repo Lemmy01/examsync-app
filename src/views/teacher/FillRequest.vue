@@ -14,6 +14,13 @@
         required: false,
        } 
     },
+    watch: {
+  
+    selectedValue(newValue) {
+      console.log(newValue);
+      this.onSalaChange(newValue);
+    },
+  },
     emits: ['update:modelValue', 'submit'],
     data() {
       return {
@@ -28,11 +35,14 @@
         dataFetched: false, // Track if data has been fetched to prevent redundant calls
         additionalData: [],
         generatedIntervals: [],
+        selectedValue: null,
+        dropdownItems: [], // Data for v-autocomplete dropdown
+        items: [], // Data for v-autocomplete dropdown
       };
     },
-   created() {
-     this.fetchData();
-   },
+    created() {
+      this.fetchData();
+    },
     methods: {
       async fetchData() {
         this.loading = true;
@@ -47,12 +57,12 @@
             {
               this.assistents.push(request.data[i]);
             }
-            const sali = await axiosInstance.get('/sali/'+ profesor.data.departament);
+          //   const sali = await axiosInstance.get('/sali/'+ profesor.data.departament);
          
-          for( var i = 0; i < sali.data.length; i++ )
-            {
-              this.sali.push(sali.data[i]);
-            }
+          // for( var i = 0; i < sali.data.length; i++ )
+          //   {
+          //     this.sali.push(sali.data[i]);
+          //   }
 
           this.dataFetched = true; // Mark data as fetched
 
@@ -117,6 +127,20 @@
       }
     },
   
+    async fetchSali(newSelectedValue) {
+      this.dropdownItems = [];
+      if (!newSelectedValue) {
+        return;
+      }
+      try {
+        const request = await axiosInstance.get(`/sali/dupanume/${newSelectedValue}`);
+        this.dropdownItems = request.data; // Update the items with the fetched data
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        this.dropdownItems = []; // Clear items if there's an error
+      }
+    },
+
       async submitForm() {
         this.validationError = '';
   
@@ -218,17 +242,17 @@
               clearable
             ></v-select>
   
-            <!-- Subject Select -->
-            <v-select
-              v-model="selectedClass"
-              label="Select Class"
-              :items="sali"
-              item-title="nume"
-              item-value="id"
-              clearable
-              @update:modelValue="onSalaChange"
-            ></v-select>
-  
+      
+            <v-autocomplete
+            v-model="selectedValue"
+            clearable
+            label="Select Sala"
+            :items="dropdownItems"
+            item-title="nume"
+            item-value="id"
+            @update:search="fetchSali"
+            class="min-width-200"
+          ></v-autocomplete>
             <!-- Start Date Select -->
             <v-select
               v-if="!(additionalData.length === 0)"

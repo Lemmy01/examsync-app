@@ -24,6 +24,7 @@ export default {
     <Sidebar v-if="accountType === 'student'" type="student" />
     <Sidebar v-else-if="accountType === 'profesor'" type="profesor" />
     <Sidebar v-else-if="accountType === 'secretar'" type="secretar" />
+    <Sidebar v-else-if="accountType === 'sef'" type="sef" />
    <v-main>
     <router-view />
     </v-main> 

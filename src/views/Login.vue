@@ -55,14 +55,16 @@ export default defineComponent({
           console.log(decoded.rol);
           switch (decoded.rol) {
             case "student":
-              router.push({ name: "Teachers" });
-              console.log("profesor");
+              router.push({ name: "Exams" });
               break;
             case "profesor":
               router.push({ name: "ViewRequests" });
               break;
             case "secretar":
               router.push({ name: "CreateTeachers" });
+              break;
+            case "sef":
+              router.push({ name: "Teachers" });
               break;
             default:
               break;

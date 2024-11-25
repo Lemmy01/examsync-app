@@ -1,14 +1,13 @@
 <script>
 import Card from '@/components/Card.vue';
 import axiosInstance  from '@/axios';
-import AddUserDialog from '@/components/AddUserDialog.vue';
+import AddMaterieDialog from '@/components/AddMaterieDialog.vue';
 
 export default {
-  name: 'CreateTeachers',
+  name: 'ViewMaterii',
   components: {
     Card,
-    AddUserDialog,
-
+    AddMaterieDialog,
   },
   data() {
     return {
@@ -18,16 +17,15 @@ export default {
     };
   },
   async created(){
-    await this.fetchData();
+  await  this.fetchData();
   },
   methods: {
-    handleCardClick(item) {
-      this.$router.push({ name: 'CreateExams', params: { id: item.id } });
-    },
     async fetchData() {
       this.isLoading = true;
       try {
-        const request =await axiosInstance.get('/profesor');         
+
+        const id =  localStorage.getItem('id');
+        const request =await axiosInstance.get('/materii/' + id);         
      
        for( var i = 0; i < request.data.length; i++ )
          {
@@ -66,7 +64,7 @@ export default {
       <v-container v-if="!isLoading">
         <v-row justify="end">
           <v-btn color="primary" @click="dialogVisible = true">
-            Add New Teacher
+            Add New Materie
           </v-btn>
         </v-row>
         <v-row>
@@ -76,19 +74,20 @@ export default {
                  cols="12"  md="5" lg="4" xl="3"
           >
             <Card
-              class="card-container"
               :title="item.nume"
-              :subtitle="item.telefon"
-              :description="item.departament"
-              :buton-name="'Add Exam'"
-              @card-click="handleCardClick(item)"
+              :subtitle="item.abreviere"
+              :buton-name="'Delete'"
+              @card-click=""
             />
           </v-col>
         </v-row>
-        <AddUserDialog  v-model="dialogVisible" :isTeacher='false' />
+        <AddMaterieDialog  v-model="dialogVisible"  
+     />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
-
+<style scoped>
+/* Optional: Custom styles if needed */
+</style>

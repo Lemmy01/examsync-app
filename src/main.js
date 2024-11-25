@@ -9,9 +9,13 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi'; // Optional icon set
 import '@mdi/font/css/materialdesignicons.css';
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 loadFonts()
 
 const vuetify = createVuetify({
+  components: {
+    VNumberInput,
+  },
   components,
   directives,
   theme: {

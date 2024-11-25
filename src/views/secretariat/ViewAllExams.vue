@@ -5,7 +5,7 @@ import AddUserDialog from '@/components/AddUserDialog.vue';
 import PromoteAlert from '@/components/PromoteAlert.vue';
 
 export default {
-  name: 'CreateStudents',
+  name: 'ViewAllExams',
   components: {
     Card,
     AddUserDialog,
@@ -44,41 +44,36 @@ export default {
             this.dropdownItems = []; // Clear items if there's an error
         } 
      },
-     async fetchData(newSelectedValue) {
+    async fetchData(newSelectedValue) {
         this.items = [];
         if (!newSelectedValue) {
             return;
         }
-        console.log(newSelectedValue);
         try {
-            const request = await axiosInstance.get(`/secretariat/studentidingrupa/${newSelectedValue}`);
-            this.items = request.data; // Update the items with the fetched data
+            const request = await axiosInstance.get(`/examen/grupaexamene/${newSelectedValue}`);
+            for( var i = 0; i < request.data.length; i++ )
+         {
+            const student = await request.data[i].sef;
+            const materie = request.data[i].materie;
+            this.items.push({
+            numeMaterie: materie.nume,
+            numeElev: student.nume,
+            id: request.data[i].id,
+            data: request.data[i].data,
+            oraStart: request.data[i].orastart,
+            oraStop: request.data[i].orafinal,
+           });
+         }
+            console.log(request.data);
         } catch (error) {
             console.error('Error fetching data:', error);
             this.items = []; // Clear items if there's an error
         } 
      },
-     async handleCardClick(item) {
-      try {
-        const grupaId = this.selectedValue;
-        const studentId = item.id;
-        const request = await axiosInstance.put(`/student/promovare/${grupaId}/${studentId}`);
-        if (request.status >= 200 && request.status < 300) {
-          this.promotionStatus = "Studentul a fost promovat cu succes!";
-          this.fetchData(this.selectedValue);
-        } else {
-          this.promotionStatus = "Studentul nu a putut fi promovat!";
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        this.promotionStatus = "A apărut o eroare la promovarea studentului!";
-      }
-
-      // Hide alert after 2 seconds
-      setTimeout(() => {
-        this.promotionStatus = null;
-      }, 2000);
+     handleCardClick() {
+      this.$router.push({ name: 'CreateExams'  });
     },
+ 
   },
 };
 </script>
@@ -113,18 +108,7 @@ export default {
                 @update:search="fetchGrupe"
                 class="min-width-200" 
               ></v-autocomplete>
-            </v-col>
-  
-            <!-- Align the button to the end with a minimum width -->
-            <v-col cols="auto" class="text-right">
-              <v-btn
-                color="primary"
-                @click="dialogVisible = true"
-                class="min-width-150"     
-              >
-                Add New Student
-              </v-btn>
-            </v-col>
+            </v-col>        
           </v-row>
   
           <!-- Cards display -->
@@ -137,18 +121,14 @@ export default {
               lg="4"
               xl="3"
             >
-            <Card
-              class="card-container"
-              :title="item.nume"
-              :subtitle="item.telefon"
-              :description="item.isSef ? 'Group Leader' : 'Student'"
-              :buton-name="'Promote'"
-              @card-click="handleCardClick(item)"
-            />
+            <Card   
+             :title="item.numeMaterie"
+              :subtitle="item.numeElev"
+              :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"
+              :buton-name="'Check out'"
+            />           
             </v-col>
           </v-row>
-  
-          <AddUserDialog v-model="dialogVisible" :isTeacher="false" />
           <v-alert v-if="promotionStatus" type="info" class="mt-3">
             {{ promotionStatus }}
           </v-alert>
@@ -159,7 +139,6 @@ export default {
   </template>
   
   <style scoped>
-  /* Custom minimum width for autocomplete and button */
   .min-width-200 {
     min-width: 200px; /* Set minimum width for v-autocomplete */
   }

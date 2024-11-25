@@ -3,20 +3,15 @@
   import axiosInstance from '@/axios';
   
   export default {
-    name: 'FillRequest',
+    name: 'CreateExam',
     props: {
-      date: {
-          type: String, // Sau Date, în funcție de formatul pe care îl folosești
-          required: false,
-        },
-       id:{
+      id: {
         type: String,
-        required: false,
-       } 
+        required: true,
+      },
     },
     watch: {
-  
-    selectedClass(newValue) {
+      selectedClass(newValue) {
       console.log(newValue);
       this.onSalaChange(newValue);
     },
@@ -26,15 +21,20 @@
       return {
         selectedClass: null,
         selectedAsistent: null,
+        selectedMaterie: null,
         selectStartDate: null,
         selectEndDate: null,
         assistents: [],
         sali: [],
+        grupe: [], // Data for v-autocomplete dropdown
+        materii: [],
+        selectedDate: null,
         loading: false,
         validationError: '',
         dataFetched: false, // Track if data has been fetched to prevent redundant calls
         additionalData: [],
         generatedIntervals: [],
+        selectedGrupa: null,
         dropdownItems: [], // Data for v-autocomplete dropdown
         items: [], // Data for v-autocomplete dropdown
       };
@@ -45,16 +45,21 @@
     methods: {
       async fetchData() {
         this.loading = true;
-        try {               
-          const id =localStorage.getItem('id');
-
-          const profesor = await axiosInstance.get('/user/info/' + id);
-          console.log(profesor.data);
+        try {             
+      
+          const id =this.id;
           const request =await axiosInstance.get('/asistenti/' + id);         
      
           for( var i = 0; i < request.data.length; i++ )
             {
               this.assistents.push(request.data[i]);
+            }
+
+          const request1 =await axiosInstance.get('/materii/' + id);         
+          console.log(request1.data)
+          for( var i = 0; i < request1.data.length; i++ )
+            {
+              this.materii.push(request1.data[i]);
             }
           //   const sali = await axiosInstance.get('/sali/'+ profesor.data.departament);
          
@@ -73,6 +78,32 @@
 
         }
       },
+
+      async fetchGrupe(newSelectedValue) {
+        this.grupe = [];
+        if (!newSelectedValue) {
+            return;
+        }
+        try {
+            const request = await axiosInstance.get(`/grupe/${newSelectedValue}`);
+            this.grupe = request.data; // Update the items with the fetched data
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            this.grupe = []; // Clear items if there's an error
+        } 
+     },
+
+     convertToIsoDate() {
+    // Parsează data folosind obiectul Date
+    const date = new Date(this.selectedDate);
+
+    // Formatează în YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Luna începe de la 0
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  },
      generateHourlyIntervals(start) {
         const interval = this.additionalData.find(item => item.ora_start === start);
         if (!interval) return;
@@ -110,8 +141,9 @@
       this.generatedIntervals = [];
 
       this.loading = true;
+      console.log(this.convertToIsoDate())
       try {
-        const response = await axiosInstance.get(`/sali/${selectedSalaId}/${this.date}`);
+        const response = await axiosInstance.get(`/sali/${selectedSalaId}/${this.convertToIsoDate()}`);
         for( var i = 0; i < response.data.length; i++ )
             {
               this.additionalData.push(response.data[i]);
@@ -159,24 +191,34 @@
           this.validationError = 'Please select a end hour.';
           return;
         }
+        if (!this.selectedDate) {
+          this.validationError = 'Please select a date.';
+          return;
+        }
   
         this.loading = true;
         const idUtilizator = localStorage.getItem('id');
-        const formData = {
-            id: this.id,
-            asistentid: this.selectedAsistent,
-            orastart: this.selectStartDate,
-            orafinal: this.selectEndDate,
-            actualizatde: idUtilizator,
-            salaid: this.selectedClass
-          }
+     
+        const formData = 
+          {
+          "profesorid": this.id,
+          "grupaid": this.selectedGrupa,
+          "materieid": this.selectedMaterie,
+          "data": this.selectedDate,
+          "asistentid": this.selectedAsistent,
+          "orastart": this.selectStartDate,
+          "orafinal": this.selectEndDate,
+          "actualizatde": idUtilizator,
+          "salaid":  this.selectedClass
+        }
 
+        console.log(formData)
         try {
-          const response = await axiosInstance.put('/profesor/acceptaexamen', formData);
+          const response = await axiosInstance.post('/examen/examenfortat', formData);
           console.log(response.status);
           if (response.status === 200 || response.status === 201) {
             this.$emit('submit', formData);
-            this.$router.push({ name: 'ViewRequests' });
+            this.$router.push({ name: 'ViewAllExams' });
           }
         } catch (error) {
           console.error('Error submitting form:', error);
@@ -187,8 +229,7 @@
       },
   
       closeDialog() {
-        this.resetForm();
-        this.$emit('update:modelValue', false);
+        this.$router.push({ name: 'CreateTeachers' });
       },
   
       resetForm() {
@@ -231,6 +272,11 @@
                 ></v-progress-circular>
               </v-col>
             </v-row>
+            <v-row v-if="!loading" justify="center">
+              <v-col cols="auto">
+                <v-date-picker v-model="selectedDate" label="Select Date"></v-date-picker>
+              </v-col>
+            </v-row>
             <!-- Asistent pick -->
             <v-select
               v-model="selectedAsistent"
@@ -240,6 +286,24 @@
               item-value="id"
               clearable
             ></v-select>
+            <v-select
+              v-model="selectedMaterie"
+              label="Select Materie"
+              :items="materii"
+              item-title="nume"
+              item-value="subjectId"
+              clearable
+            ></v-select>
+            <v-autocomplete
+                v-model="selectedGrupa"
+                clearable
+                label="Select Group"
+                :items="grupe"
+                item-title="nume"
+                item-value="id"
+                @update:search="fetchGrupe"
+                class="min-width-200" 
+              ></v-autocomplete>
             <v-autocomplete
             v-model="selectedClass"
             clearable

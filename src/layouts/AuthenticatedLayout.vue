@@ -13,11 +13,6 @@ export default {
       return localStorage.getItem('accountType');
     },
   },
-  setup() {
-    console.log(localStorage.getItem('accountType'));
-
-    return {};
-  },
 };
 
 </script>
@@ -28,7 +23,7 @@ export default {
   <v-container fluid class="d-flex">
     <Sidebar v-if="accountType === 'student'" type="student" />
     <Sidebar v-else-if="accountType === 'profesor'" type="profesor" />
-    <Sidebar v-else-if="accountType === 'admin'" type="admin" />
+    <Sidebar v-else-if="accountType === 'secretar'" type="secretar" />
    <v-main>
     <router-view />
     </v-main> 

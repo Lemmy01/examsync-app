@@ -12,12 +12,15 @@ export default defineComponent({
     InputField,
     SubmitButton,
   },
+
   setup() {
     const email = ref("");
     const password = ref("");
     const errorMessage = ref(null);
     const isFormValid = ref(false);
     const router = useRouter();
+    const isLoading = ref(false);
+
 
     // Validation rules
     const emailRules = [
@@ -30,6 +33,8 @@ export default defineComponent({
     ];
 
     const handleLogin = async () => {
+      isLoading.value = true;
+
       // Reset the error message on each attempt
       errorMessage.value = null;
 
@@ -73,7 +78,9 @@ export default defineComponent({
       } catch (error) {
         console.log(error);
         errorMessage.value = "An unexpected error occurred. Please try again.";
-      }
+      }finally {
+        isLoading.value = false;
+      };
     };
 
     return {
@@ -84,14 +91,31 @@ export default defineComponent({
       handleLogin,
       emailRules,
       passwordRules,
+      isLoading,
     };
   },
+  methods:{
+    
+  }
 });
 </script>
 
 <template>
   <v-main>
-    <v-container fluid>
+    <v-container v-if="isLoading">
+        <v-row justify="center">
+          <v-col cols="auto">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="64"
+              width="4"
+            ></v-progress-circular>
+          </v-col>
+        </v-row>
+      </v-container>
+
+    <v-container fluid  v-if="!isLoading">
       <v-row justify="center">
         <v-col md="4">
           <v-card class="pa-4">

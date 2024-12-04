@@ -27,6 +27,7 @@ export default {
       type: Array,
       default: () => [],
     },
+
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {

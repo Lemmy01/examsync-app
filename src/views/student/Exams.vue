@@ -16,7 +16,8 @@ export default {
       items: [], // Initialize items as an empty array
       dialogVisible: false, // Manage dialog visibility
       isLoading: true, // Track loading state
-
+      stare: 'Approved',
+      filterOptions: ['Approved', 'Pending', 'Rejected'],
     };
   },
   async created(){
@@ -30,13 +31,12 @@ export default {
     async fetchData() {
       this.isLoading = true;
       try {
-   
+        this.items = [];
         const id = localStorage.getItem('id');
 
-        const student = await axiosInstance.get('/user/info/' + id);
-        console.log(student.data);
-        const response = await axiosInstance.get('/examen/grupaexamene/' + student.data.idgrupa);
-      
+        const response = await axiosInstance.get(`/examen/studentdupastare/${id}/${this.stare.toLocaleLowerCase()}`);
+        
+        console.log(this.stare.toLocaleLowerCase())
        for( var i = 0; i < response.data.length; i++ )
          {
             const student = await response.data[i].sef;
@@ -64,11 +64,11 @@ export default {
 </script>
 
 
-
 <template>
   <v-app>
     <!-- Main Content -->
     <v-main>
+      <!-- Loading State -->
       <v-container v-if="isLoading">
         <v-row justify="center">
           <v-col cols="auto">
@@ -81,8 +81,24 @@ export default {
           </v-col>
         </v-row>
       </v-container>
- 
+
+      <!-- Filter Dropdown -->
       <v-container v-if="!isLoading">
+        <v-row justify="end" class="mb-4">
+          <v-col cols="auto">
+            <v-select
+              v-model="stare"
+              :items="filterOptions"
+              label="Filter by"
+              dense
+              outlined
+              style="max-width: 200px"
+              @update:model-value="fetchData"
+            />
+          </v-col>
+        </v-row>
+
+        <!-- Items List -->
         <v-row>
           <v-col
             v-for="item in items"
@@ -90,10 +106,9 @@ export default {
             cols="12"  md="6" lg="5" xl="3"
           >
             <Card   
-             :title="item.numeMaterie"
+              :title="item.numeMaterie"
               :subtitle="item.numeElev"
-              :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"
-              :buton-name="'Check out'"
+              :description="this.stare !='Approved'?'' : `${item.data}  ${item.oraStart} - ${item.oraStop}`"         
             />
           </v-col>
         </v-row>
@@ -101,6 +116,7 @@ export default {
     </v-main>
   </v-app>
 </template>
+
 
 <style scoped>
 /* Optional: Custom styles if needed */

@@ -2,12 +2,17 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/views/Login.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-import Teachers from '@/views/student_pages/Teachers.vue';
-import Exams from '@/views/student_pages/Exams.vue';
-import ViewRequests from '@/views/teacher_pages/ViewRequests.vue';
-import FillRequest from '@/views/teacher_pages/FillRequest.vue';
-import ViewAssistents from '@/views/teacher_pages/ViewAssistents.vue';
-import ViewApprovedExams from '@/views/teacher_pages/ViewApprovedExams.vue';
+import Teachers from '@/views/student/Teachers.vue';
+import Exams from '@/views/student/Exams.vue';
+import ViewRequests from '@/views/teacher/ViewRequests.vue';
+import FillRequest from '@/views/teacher/FillRequest.vue';
+import ViewAssistents from '@/views/teacher/ViewAssistents.vue';
+import ViewApprovedExams from '@/views/teacher/ViewApprovedExams.vue';
+import CreateTeachers from '@/views/secretariat/CreateTeachers.vue';
+import CreateStudents from '@/views/secretariat/CreateStudent.vue';
+import CreateExam from '@/views/secretariat/CreateExam.vue';
+import ViewAllExams from '@/views/secretariat/ViewAllExams.vue';
+import ViewMaterii from '@/views/teacher/ViewMaterii.vue';
 
 const routes = [
   {
@@ -46,11 +51,36 @@ const routes = [
         component: ViewAssistents,
       },
       {
+        path: 'view_materii',
+        name: 'ViewMaterii',
+        component: ViewMaterii,
+      },
+      {
+        path: 'create_teachers',
+        name: 'CreateTeachers',
+        component: CreateTeachers,
+      },
+      {
+        path: 'create_students',
+        name: 'CreateStudents',
+        component: CreateStudents,
+      },
+      {
+        path: 'view_all_exams',
+        name: 'ViewAllExams',
+        component: ViewAllExams,
+      },
+      {
+        path: 'create_exam/:id?',
+        name: 'CreateExams',
+        component: CreateExam,
+        props: true, // Activează transmiterea route parameters ca prop-uri
+      },
+      {
         path: 'fill-request/:date?/:id?',
         name: 'FillRequests',
         component: FillRequest,
         props: true, // Activează transmiterea route parameters ca prop-uri
-
       },
       // Add more authenticated routes here
     ],

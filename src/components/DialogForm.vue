@@ -92,7 +92,8 @@ export default {
     async fetchData() {
       this.loading = true;
       try {
-        const response = await axiosInstance.get(`/materii/${this.profesorId}`);
+        const id = localStorage.getItem('id');
+        const response = await axiosInstance.get(`/materii/studentmateriifaraexamen/${this.profesorId}/${id}`);
 
         if (Array.isArray(response.data) && response.data.length > 0) {
           this.items = response.data.map((item) => ({

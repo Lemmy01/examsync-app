@@ -1,6 +1,7 @@
   
   <script>
   import axiosInstance from '@/axios';
+import RefuzeExam from '@/components/RefuzeExam.vue';
   
   export default {
     name: 'FillRequest',
@@ -14,9 +15,18 @@
         required: false,
        } 
     },
+    components: {
+      RefuzeExam,
+    },
+    watch: {
+    selectedClass(newValue) {
+      this.onSalaChange(newValue);
+    },
+  },
     emits: ['update:modelValue', 'submit'],
     data() {
       return {
+        dialogVisible: false, // Manage dialog visibility
         selectedClass: null,
         selectedAsistent: null,
         selectStartDate: null,
@@ -28,32 +38,30 @@
         dataFetched: false, // Track if data has been fetched to prevent redundant calls
         additionalData: [],
         generatedIntervals: [],
+        dropdownItems: [], // Data for v-autocomplete dropdown
+        items: [], // Data for v-autocomplete dropdown
       };
     },
-   created() {
-     this.fetchData();
-   },
     methods: {
-      async fetchData() {
+      async fetchAssistenti() {
         this.loading = true;
-        try {               
+        try {            
+          this.assistents= [];   
           const id =localStorage.getItem('id');
 
-          const profesor = await axiosInstance.get('/user/info/' + id);
-          console.log(profesor.data);
-          const request =await axiosInstance.get('/asistenti/' + id);         
+          const data = {
+            "profesorid": id,
+            "data": this.date,
+            "orastart": this.selectStartDate,
+            "orafinal": this.selectEndDate
+          }
+          console.log(data);
+          const request =await axiosInstance.post('/examen/asistentdisponibil',data);         
      
           for( var i = 0; i < request.data.length; i++ )
             {
               this.assistents.push(request.data[i]);
             }
-            const sali = await axiosInstance.get('/sali/'+ profesor.data.departament);
-         
-          for( var i = 0; i < sali.data.length; i++ )
-            {
-              this.sali.push(sali.data[i]);
-            }
-
           this.dataFetched = true; // Mark data as fetched
 
         } catch (error) {
@@ -64,21 +72,31 @@
 
         }
       },
-     generateHourlyIntervals(start) {
-        const interval = this.additionalData.find(item => item.ora_start === start);
-        if (!interval) return;
-        const end = interval.ora_end;
-        console.log(end)
-        const result = [];
-        let currentTime = this.addMinutesToTime(start, 60); // Start + 1 oră
+      generateHourlyIntervalsForStart(start,endTime) {
 
-        while (currentTime <= end) {
+        const result = [];
+        let currentTime = start;
+        while (currentTime <= endTime) {
           const nextTime = this.addMinutesToTime(currentTime, 60); // Următoarea oră
           result.push(`${currentTime}`); // Adăugăm intervalul
           currentTime = nextTime; // Trecem la următoarea oră
         }
 
-        this.generatedIntervals = result;
+        this.additionalData = result;
+    
+      },
+
+      generateHourlyIntervals(start) {
+        const interval = [];
+        var poz = this.additionalData.findIndex(item => item === start);
+       
+
+        for(var i = poz + 1; i < this.additionalData.length; i++){
+          interval.push(this.additionalData[i]);
+        }
+        if (!interval) return;
+      
+        this.generatedIntervals = interval;
     
       },
 
@@ -105,7 +123,7 @@
         const response = await axiosInstance.get(`/sali/${selectedSalaId}/${this.date}`);
         for( var i = 0; i < response.data.length; i++ )
             {
-              this.additionalData.push(response.data[i]);
+              this.additionalData.push(this.generateHourlyIntervalsForStart(response.data[i].ora_start,response.data[i].ora_end));
             }
       
         console.log('Data for selected sala:', response.data);
@@ -117,6 +135,21 @@
       }
     },
   
+    async fetchSali(newSelectedValue) {
+      this.dropdownItems = [];
+      if (!newSelectedValue) {
+        return;
+      }
+      try {
+        const request = await axiosInstance.get(`/sali/dupanume/${newSelectedValue}`);
+        this.dropdownItems = request.data; // Update the items with the fetched data
+       
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        this.dropdownItems = []; // Clear items if there's an error
+      }
+    },
+
       async submitForm() {
         this.validationError = '';
   
@@ -165,8 +198,9 @@
   
       closeDialog() {
         this.resetForm();
-        this.$emit('update:modelValue', false);
+        this.$router.push({ name: 'ViewRequests' });
       },
+    
   
       resetForm() {
         this.selectedDate = null;
@@ -208,34 +242,23 @@
                 ></v-progress-circular>
               </v-col>
             </v-row>
-            <!-- Asistent pick -->
-            <v-select
-              v-model="selectedAsistent"
-              label="Select Assistent"
-              :items="assistents"
-              item-title="nume"
-              item-value="id"
-              clearable
-            ></v-select>
-  
-            <!-- Subject Select -->
-            <v-select
-              v-model="selectedClass"
-              label="Select Class"
-              :items="sali"
-              item-title="nume"
-              item-value="id"
-              clearable
-              @update:modelValue="onSalaChange"
-            ></v-select>
-  
+            
+            <v-autocomplete
+            v-model="selectedClass"
+            clearable
+            label="Select Sala"
+            :items="dropdownItems"
+            item-title="nume"
+            item-value="id"
+            @update:search="fetchSali"
+            class="min-width-200"
+          ></v-autocomplete>
             <!-- Start Date Select -->
             <v-select
               v-if="!(additionalData.length === 0)"
               v-model="selectStartDate"
-              label="Select Date"
+              label="Select Start Hour"
               :items="additionalData"
-              item-title="ora_start"
               clearable
               @update:modelValue="generateHourlyIntervals(selectStartDate)"
             ></v-select>
@@ -244,10 +267,22 @@
             <v-select
               v-if="selectStartDate"
               v-model="selectEndDate"
-              label="Select Date"
+              label="Select Erd Hour"
               :items="generatedIntervals"
               item-title="ora_end"
               clearable
+              @update:modelValue="fetchAssistenti()"
+
+            ></v-select>
+            <!-- Asistent pick -->
+            <v-select
+              v-model="selectedAsistent"
+              label="Select Assistent"
+              :items="assistents"
+              item-title="nume"
+              item-value="id"
+              clearable
+              v-if="selectStartDate !=null && selectEndDate !=null"
             ></v-select>
   
             <!-- Error Message -->
@@ -258,10 +293,13 @@
   
           <v-card-actions>
             <v-row justify="end">
+              <v-btn color="error" text @click="dialogVisible = true" :disabled="loading">Reject</v-btn>
               <v-btn text @click="closeDialog" :disabled="loading">Cancel</v-btn>
               <v-btn color="primary" @click="submitForm" :loading="loading" :disabled="loading">Submit</v-btn>
             </v-row>
           </v-card-actions>
+          <RefuzeExam v-model="dialogVisible" :id="this.id"  :is-teacher="true"
+          />
         </v-card>
       </v-col>
     </v-row>

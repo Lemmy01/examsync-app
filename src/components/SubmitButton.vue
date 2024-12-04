@@ -10,6 +10,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    text: {
+      type: String,
+      required: true,
+    },
   },
 };
 </script>
@@ -19,13 +23,14 @@ export default {
     color="primary"
     @click="handleLogin"
     :disabled="disabled"
-	type="submit"
-	class="mt-4"
-	block
+    type="submit"
+    class="mt-4"
+    block
   >
-    Login
+    {{ text }} 
   </v-btn>
 </template>
+
 
 <style scoped>
 /* Custom styles for the button */

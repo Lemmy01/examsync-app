@@ -29,6 +29,7 @@
               :description="item.telefon"
               :butonName="'Create request'"
               @card-click="item.dialogVisible = true"
+              :showButton="true"
             />
             
             <!-- DialogForm Component for Each Item -->

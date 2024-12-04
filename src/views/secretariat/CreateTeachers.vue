@@ -1,13 +1,13 @@
 <script>
 import Card from '@/components/Card.vue';
 import axiosInstance  from '@/axios';
-import AddAssistentDialog from '@/components/AddAssistentDialog.vue';
+import AddUserDialog from '@/components/AddUserDialog.vue';
 
 export default {
-  name: 'ViewAssistents',
+  name: 'CreateTeachers',
   components: {
     Card,
-    AddAssistentDialog,
+    AddUserDialog,
 
   },
   data() {
@@ -18,15 +18,16 @@ export default {
     };
   },
   async created(){
-  await  this.fetchData();
+    await this.fetchData();
   },
   methods: {
+    handleCardClick(item) {
+      this.$router.push({ name: 'CreateExams', params: { id: item.id } });
+    },
     async fetchData() {
       this.isLoading = true;
       try {
-
-        const id =  localStorage.getItem('id');
-        const request =await axiosInstance.get('/asistenti/' + id);         
+        const request =await axiosInstance.get('/profesor');         
      
        for( var i = 0; i < request.data.length; i++ )
          {
@@ -65,7 +66,7 @@ export default {
       <v-container v-if="!isLoading">
         <v-row justify="end">
           <v-btn color="primary" @click="dialogVisible = true">
-            Add New Asistent
+            Add New Teacher
           </v-btn>
         </v-row>
         <v-row>
@@ -75,21 +76,20 @@ export default {
                  cols="12"  md="5" lg="4" xl="3"
           >
             <Card
+              class="card-container"
               :title="item.nume"
               :subtitle="item.telefon"
               :description="item.departament"
-              :buton-name="'Delete'"
-              @card-click=""
+              :buton-name="'Add Exam'"
+              @card-click="handleCardClick(item)"
+              :showButton="true"
             />
           </v-col>
         </v-row>
-        <AddAssistentDialog  v-model="dialogVisible"  
-     />
+        <AddUserDialog  v-model="dialogVisible" :isTeacher='true' />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
-<style scoped>
-/* Optional: Custom styles if needed */
-</style>
+

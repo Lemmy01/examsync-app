@@ -19,6 +19,15 @@
       <!-- Sidebar Menu Items -->
       <v-list dense>
         <template v-if="type === 'student'">
+      <v-list-item
+        prepend-icon="mdi-star"
+        title="View Exams"
+        value="view_exams"
+        to="/exams"
+      ></v-list-item>
+        </template>
+
+        <template v-if="type === 'sef'">
           <v-list-item
         prepend-icon="mdi-account-multiple"
         title="View Teachers"
@@ -40,25 +49,46 @@
         title="View Requests"
         value="view_requests"
         to="/view_requests"
-      ></v-list-item>
+       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-account-multiple"
         title="View Assistents"
         value="view_asistenti"
         to="/view_assistents"
       ></v-list-item>
-     
       <v-list-item
         prepend-icon="mdi-account-multiple"
         title="View Exams"
         value="view_exams"
         to="/view_approved_exams"
       ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="View Materii"
+        value="view_materii"
+        to="/view_materii"
+      ></v-list-item>
         </template>
 
-        <template v-else-if="type === 'admin'">
-      
-  
+        <template v-else-if="type === 'secretar'">
+          <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="Create Teacher"
+        value="create_teacher"
+        to="/create_teachers"
+      ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="Create Students"
+        value="create_students"
+        to="/create_students"
+      ></v-list-item>
+      <v-list-item
+        prepend-icon="mdi-account-multiple"
+        title="View Exams"
+        value="view_all_exams"
+        to="/view_all_exams"
+      ></v-list-item>
         </template>
 
         <!-- Logout Button (common for all users) -->
@@ -72,6 +102,7 @@
     </v-list>
   </v-navigation-drawer>
 </template>
+
 
 <script>
 import axiosInstance from '@/axios';

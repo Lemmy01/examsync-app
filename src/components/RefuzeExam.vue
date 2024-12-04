@@ -19,6 +19,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    isTeacher: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   emits: ["update:modelValue", "submit"],
@@ -30,6 +34,7 @@ export default defineComponent({
       validationError: "",
       isFormValid: false,
       selectedValue: null,
+
     };
   },
   watch: {
@@ -49,14 +54,16 @@ export default defineComponent({
           };
           console.log(this.id);
           console.log(data);
-          const response = await axiosInstance.delete(`/examen/refuzaexamen/${this.id}`, {
+          const response =this.isTeacher ? await axiosInstance.delete(`/examen/refuzaexamen/${this.id}`, {
+            data: data
+          }):await axiosInstance.delete(`/examen/stergeexamen/${this.id}`, {
             data: data
           });
 
           console.log(response.status);
           if (response.status === 200 || response.status === 201) {
          
-            this.$router.push({ name: 'ViewRequests' });
+            this.closeDialog();
           }
         } catch (error) {
           console.error('Error submitting form:', error);

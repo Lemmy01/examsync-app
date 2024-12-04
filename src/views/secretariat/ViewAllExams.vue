@@ -1,15 +1,14 @@
 <script>
 import Card from '@/components/Card.vue';
 import axiosInstance from '@/axios';
-import AddUserDialog from '@/components/AddUserDialog.vue';
-import PromoteAlert from '@/components/PromoteAlert.vue';
+
+import RefuzeExam from '@/components/RefuzeExam.vue';
 
 export default {
   name: 'ViewAllExams',
   components: {
     Card,
-    AddUserDialog,
-    PromoteAlert,
+    RefuzeExam
   },
 
   data() {
@@ -70,10 +69,10 @@ export default {
             this.items = []; // Clear items if there's an error
         } 
      },
+  
      handleCardClick() {
-      this.$router.push({ name: 'CreateExams'  });
+      this.dialogVisible = true;
     },
- 
   },
 };
 </script>
@@ -125,14 +124,18 @@ export default {
              :title="item.numeMaterie"
               :subtitle="item.numeElev"
               :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"
-              :buton-name="'Check out'"
-            />           
+              :buton-name="'Delete'"
+              :showButton='true'
+             @card-click="handleCardClick"
+            />       
+            <RefuzeExam v-model="dialogVisible" :id="item.id" :is-teacher="false"
+            />    
             </v-col>
           </v-row>
           <v-alert v-if="promotionStatus" type="info" class="mt-3">
             {{ promotionStatus }}
           </v-alert>
-  
+         
         </v-container>
       </v-main>
     </v-app>

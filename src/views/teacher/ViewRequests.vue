@@ -112,6 +112,8 @@ export default {
               :description="item.data"
               :buton-name="'Check out'"
               @card-click="handleCardClick(item.data, item.id)"
+              :showButton="true"
+
             >
               <!-- Slot pentru butonul Refuză -->
               <template #actions>

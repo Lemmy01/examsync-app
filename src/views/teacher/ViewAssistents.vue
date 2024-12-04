@@ -15,6 +15,7 @@ export default {
       items: [], // Initialize items as an empty array
       dialogVisible: false, // Manage dialog visibility
       isLoading: false,
+      validationError: null,
     };
   },
   async created(){
@@ -23,8 +24,9 @@ export default {
   methods: {
     async fetchData() {
       this.isLoading = true;
-      try {
 
+      try {
+        this.items = [];
         const id =  localStorage.getItem('id');
         const request =await axiosInstance.get('/asistenti/' + id);         
      
@@ -35,8 +37,33 @@ export default {
     
 
       } catch (error) {
+        
         console.error('Error fetching data:', error);
         this.items = [];
+      }
+      this.isLoading = false;
+    }, 
+    async deleteItem(idAssistent) {
+      this.isLoading = true;
+      try {
+        const id =  localStorage.getItem('id');
+        console.log(id);
+        console.log(idAssistent);
+        const request =await axiosInstance.delete(`/asistenti/${idAssistent}/${id}`);         
+         
+        if(request.status == 200 || request.status ==201){
+          await this.fetchData();
+        }
+
+      } catch (error) {
+        if(request.status == 418){
+          validationError= request.message;
+        }else{
+          console.error('Error fetching data:', error);
+          validationError='Something went wrong';
+          this.items = [];
+        }
+     
       }
       this.isLoading = false;
     }, 
@@ -79,10 +106,14 @@ export default {
               :subtitle="item.telefon"
               :description="item.departament"
               :buton-name="'Delete'"
-              @card-click=""
+              @card-click="deleteItem(item.id)"
+              :showButton="true"
             />
           </v-col>
         </v-row>
+       <v-alert v-if="validationError" type="error" class="mt-3">
+              {{ validationError }}
+            </v-alert>
         <AddAssistentDialog  v-model="dialogVisible"  
      />
       </v-container>

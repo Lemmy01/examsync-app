@@ -5,7 +5,7 @@
     <v-card-subtitle>{{ subtitle }}</v-card-subtitle>
     <v-card-text> {{ description }}</v-card-text>
     <v-card-actions >
-    <v-btn color="primary" @click="handleCardClick">  {{ butonName }}</v-btn>
+    <v-btn v-if="showButton" color="primary" @click="handleCardClick">  {{ butonName }}</v-btn>
 
     </v-card-actions>
   </v-card>
@@ -19,6 +19,7 @@ export default {
     subtitle: String,
     description: String,
     butonName: String,
+    showButton: true,
   },
   methods: {
     handleCardClick() {

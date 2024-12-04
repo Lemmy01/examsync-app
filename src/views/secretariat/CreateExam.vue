@@ -43,17 +43,38 @@
       this.fetchData();
     },
     methods: {
-      async fetchData() {
+      async fetchAssistenti() {
         this.loading = true;
         try {             
       
           const id =this.id;
-          const request =await axiosInstance.get('/asistenti/' + id);         
+          const postData ={
+            "profesorid": id,
+            "data": this.selectedDate,
+            "orastart": this.selectStartDate,
+            "orafinal": this.selectEndDate
+          }
+          const request =await axiosInstance.post(`/examen/asistentdisponibil` ,postData);         
      
           for( var i = 0; i < request.data.length; i++ )
             {
               this.assistents.push(request.data[i]);
             }
+
+        } catch (error) {
+         console.error('Error fetching data:', error);
+          this.items = [];
+        } finally {
+          this.loading = false;
+
+        }
+      },
+
+      async fetchData() {
+        this.loading = true;
+        try {             
+      
+          const id =this.id;
 
           const request1 =await axiosInstance.get('/materii/' + id);         
           console.log(request1.data)
@@ -61,12 +82,7 @@
             {
               this.materii.push(request1.data[i]);
             }
-          //   const sali = await axiosInstance.get('/sali/'+ profesor.data.departament);
-         
-          // for( var i = 0; i < sali.data.length; i++ )
-          //   {
-          //     this.sali.push(sali.data[i]);
-          //   }
+  
 
           this.dataFetched = true; // Mark data as fetched
 
@@ -104,24 +120,33 @@
 
     return `${year}-${month}-${day}`;
   },
-     generateHourlyIntervals(start) {
-        const interval = this.additionalData.find(item => item.ora_start === start);
-        if (!interval) return;
-        const end = interval.ora_end;
-        console.log(end)
-        const result = [];
-        let currentTime = this.addMinutesToTime(start, 60); // Start + 1 oră
+  generateHourlyIntervalsForStart(start,endTime) {
 
-        while (currentTime <= end) {
-          const nextTime = this.addMinutesToTime(currentTime, 60); // Următoarea oră
-          result.push(`${currentTime}`); // Adăugăm intervalul
-          currentTime = nextTime; // Trecem la următoarea oră
-        }
+const result = [];
+let currentTime = start;
+while (currentTime <= endTime) {
+  const nextTime = this.addMinutesToTime(currentTime, 60); // Următoarea oră
+  result.push(`${currentTime}`); // Adăugăm intervalul
+  currentTime = nextTime; // Trecem la următoarea oră
+}
 
-        this.generatedIntervals = result;
-    
-      },
+this.additionalData = result;
 
+},
+
+generateHourlyIntervals(start) {
+const interval = [];
+var poz = this.additionalData.findIndex(item => item === start);
+
+
+for(var i = poz + 1; i < this.additionalData.length; i++){
+  interval.push(this.additionalData[i]);
+}
+if (!interval) return;
+
+this.generatedIntervals = interval;
+
+},
      addMinutesToTime(timeString, minutesToAdd) {
         const [hours, minutes] = timeString.split(':').map(Number);
         const totalMinutes = hours * 60 + minutes + minutesToAdd;
@@ -130,7 +155,7 @@
         return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
       },
 
-      async onSalaChange(selectedSalaId) {  
+    async onSalaChange(selectedSalaId) {  
       if (!selectedSalaId) {
         this.additionalData = [];
         return;
@@ -146,7 +171,7 @@
         const response = await axiosInstance.get(`/sali/${selectedSalaId}/${this.convertToIsoDate()}`);
         for( var i = 0; i < response.data.length; i++ )
             {
-              this.additionalData.push(response.data[i]);
+              this.additionalData.push(this.generateHourlyIntervalsForStart(response.data[i].ora_start,response.data[i].ora_end));
             }
       
         console.log('Data for selected sala:', response.data);
@@ -204,14 +229,14 @@
           "profesorid": this.id,
           "grupaid": this.selectedGrupa,
           "materieid": this.selectedMaterie,
-          "data": this.selectedDate,
+          "data": this.convertToIsoDate(this.selectedDate),
           "asistentid": this.selectedAsistent,
           "orastart": this.selectStartDate,
           "orafinal": this.selectEndDate,
           "actualizatde": idUtilizator,
           "salaid":  this.selectedClass
         }
-
+         
         console.log(formData)
         try {
           const response = await axiosInstance.post('/examen/examenfortat', formData);
@@ -221,8 +246,13 @@
             this.$router.push({ name: 'ViewAllExams' });
           }
         } catch (error) {
-          console.error('Error submitting form:', error);
-          this.validationError = 'Failed to submit the form. Please try again.';
+          if(error.response.status === 418){
+            console.error('Error submitting form:', error);
+            this.validationError = 'Group does not possess a group lider';
+          }else{
+            console.error('Error submitting form:', error);
+            this.validationError = 'Failed to submit the form. Please try again.';
+          }
         } finally {
           this.loading = false;
         }
@@ -278,14 +308,7 @@
               </v-col>
             </v-row>
             <!-- Asistent pick -->
-            <v-select
-              v-model="selectedAsistent"
-              label="Select Assistent"
-              :items="assistents"
-              item-title="nume"
-              item-value="id"
-              clearable
-            ></v-select>
+          
             <v-select
               v-model="selectedMaterie"
               label="Select Materie"
@@ -323,7 +346,7 @@
               item-title="ora_start"
               clearable
               @update:modelValue="generateHourlyIntervals(selectStartDate)"
-            ></v-select>
+                          ></v-select>
   
             <!-- End Date Select -->
             <v-select
@@ -333,8 +356,17 @@
               :items="generatedIntervals"
               item-title="ora_end"
               clearable
+              @update:modelValue="fetchAssistenti()"
             ></v-select>
-  
+            <v-select
+              v-if="selectEndDate != null && selectStartDate != null && selectedDate != null"
+              v-model="selectedAsistent"
+              label="Select Assistent"
+              :items="assistents"
+              item-title="nume"
+              item-value="id"
+              clearable
+            ></v-select>
             <!-- Error Message -->
             <v-alert v-if="validationError" type="error" class="mt-3">
               {{ validationError }}

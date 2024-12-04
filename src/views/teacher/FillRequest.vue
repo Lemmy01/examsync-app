@@ -20,7 +20,6 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
     },
     watch: {
     selectedClass(newValue) {
-      console.log(newValue);
       this.onSalaChange(newValue);
     },
   },
@@ -46,7 +45,8 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
     methods: {
       async fetchAssistenti() {
         this.loading = true;
-        try {               
+        try {            
+          this.assistents= [];   
           const id =localStorage.getItem('id');
 
           const data = {
@@ -257,7 +257,7 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
             <v-select
               v-if="!(additionalData.length === 0)"
               v-model="selectStartDate"
-              label="Select Date"
+              label="Select Start Hour"
               :items="additionalData"
               clearable
               @update:modelValue="generateHourlyIntervals(selectStartDate)"
@@ -267,7 +267,7 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
             <v-select
               v-if="selectStartDate"
               v-model="selectEndDate"
-              label="Select Date"
+              label="Select Erd Hour"
               :items="generatedIntervals"
               item-title="ora_end"
               clearable
@@ -298,7 +298,7 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
               <v-btn color="primary" @click="submitForm" :loading="loading" :disabled="loading">Submit</v-btn>
             </v-row>
           </v-card-actions>
-          <RefuzeExam v-model="dialogVisible" :id="this.id" 
+          <RefuzeExam v-model="dialogVisible" :id="this.id"  :is-teacher="true"
           />
         </v-card>
       </v-col>

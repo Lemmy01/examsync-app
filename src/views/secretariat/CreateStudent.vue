@@ -20,6 +20,7 @@ export default {
       isLoading: false,
       selectedValue: null,
       promotionStatus: null,
+ 
     };
   },
   watch: {
@@ -143,6 +144,7 @@ export default {
               :subtitle="item.telefon"
               :description="item.isSef ? 'Group Leader' : 'Student'"
               :buton-name="'Promote'"
+              :showButton="!item.isSef"
               @card-click="handleCardClick(item)"
             />
             </v-col>

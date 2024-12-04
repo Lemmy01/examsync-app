@@ -189,7 +189,7 @@ export default defineComponent({
 <template>
   <v-dialog v-model="dialogVisible" persistent max-width="400px">
     <v-card>
-      <v-card-title class="text-center">Login</v-card-title>
+      <v-card-title class="text-center">Create</v-card-title>
       <v-card-item>
         <v-form ref="form" v-model="isFormValid" @submit.prevent="submitForm">
           <InputField
@@ -253,6 +253,7 @@ export default defineComponent({
             v-if="!isTeacher"
           />
           <v-autocomplete
+              v-if="!isTeacher"
             v-model="selectedValue"
             clearable
             label="Select Group"

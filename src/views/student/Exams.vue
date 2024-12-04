@@ -106,10 +106,9 @@ export default {
             cols="12"  md="6" lg="5" xl="3"
           >
             <Card   
-             :title="item.numeMaterie"
+              :title="item.numeMaterie"
               :subtitle="item.numeElev"
-              :description="this.stare !='Approved'?'' : `${item.data}  ${item.oraStart} - ${item.oraStop}`"
-              :buton-name="'Check out'"
+              :description="this.stare !='Approved'?'' : `${item.data}  ${item.oraStart} - ${item.oraStop}`"         
             />
           </v-col>
         </v-row>

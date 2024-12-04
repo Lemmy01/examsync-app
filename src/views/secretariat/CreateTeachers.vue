@@ -82,10 +82,11 @@ export default {
               :description="item.departament"
               :buton-name="'Add Exam'"
               @card-click="handleCardClick(item)"
+              :showButton="true"
             />
           </v-col>
         </v-row>
-        <AddUserDialog  v-model="dialogVisible" :isTeacher='false' />
+        <AddUserDialog  v-model="dialogVisible" :isTeacher='true' />
       </v-container>
     </v-main>
   </v-app>

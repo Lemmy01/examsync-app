@@ -15,7 +15,8 @@ export default {
       items: [], // Initialize items as an empty array
       dialogVisible: false, // Manage dialog visibility
       isLoading: false,
-      validationError: null,
+      validationError: null,      
+      noData: false,
     };
   },
   async created(){
@@ -23,6 +24,7 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.noData = false;
       this.isLoading = true;
 
       try {
@@ -34,7 +36,9 @@ export default {
          {
            this.items.push(request.data[i]);
          }
-    
+         if(this.items.length === 0) {
+          this.noData = true;
+        }
 
       } catch (error) {
         
@@ -111,12 +115,24 @@ export default {
             />
           </v-col>
         </v-row>
+
        <v-alert v-if="validationError" type="error" class="mt-3">
               {{ validationError }}
             </v-alert>
         <AddAssistentDialog  v-model="dialogVisible"  
      />
       </v-container>
+
+      <v-container v-if="!isLoading && noData">
+        <v-row>
+          <v-col>
+             <p class="font-weight-black" style="text-align: center">         
+              No assistents available
+            </p>
+          </v-col>
+        </v-row>
+      </v-container>
+
     </v-main>
   </v-app>
 </template>

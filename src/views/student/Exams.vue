@@ -18,6 +18,7 @@ export default {
       isLoading: true, // Track loading state
       stare: 'Approved',
       filterOptions: ['Approved', 'Pending', 'Rejected'],
+      noData: false,
     };
   },
   async created(){
@@ -29,14 +30,13 @@ export default {
       this.$router.push({ name: 'FillRequests',params: { date: data ,id: id}  });
     },
     async fetchData() {
+      this.noData = false;
       this.isLoading = true;
       try {
         this.items = [];
         const id = localStorage.getItem('id');
-
         const response = await axiosInstance.get(`/examen/studentdupastare/${id}/${this.stare.toLocaleLowerCase()}`);
-        
-        console.log(this.stare.toLocaleLowerCase())
+        console.log(response.data);
        for( var i = 0; i < response.data.length; i++ )
          {
             const student = await response.data[i].sef;
@@ -51,8 +51,9 @@ export default {
            });
          }
           
-     
-         
+          if(this.items.length === 0) {
+            this.noData = true;
+          }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -83,7 +84,7 @@ export default {
       </v-container>
 
       <!-- Filter Dropdown -->
-      <v-container v-if="!isLoading">
+      <v-container v-if="!isLoading && !noData">
         <v-row justify="end" class="mb-4">
           <v-col cols="auto">
             <v-select
@@ -113,6 +114,18 @@ export default {
           </v-col>
         </v-row>
       </v-container>
+
+      <!-- No Data Message -->
+      <v-container v-if="!isLoading && noData">
+        <v-row>
+          <v-col>
+            <p class="font-weight-black">
+              No exams available
+            </p>
+          </v-col>
+        </v-row>
+      </v-container>
+
     </v-main>
   </v-app>
 </template>

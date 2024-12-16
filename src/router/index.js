@@ -13,6 +13,7 @@ import CreateStudents from '@/views/secretariat/CreateStudent.vue';
 import CreateExam from '@/views/secretariat/CreateExam.vue';
 import ViewAllExams from '@/views/secretariat/ViewAllExams.vue';
 import ViewMaterii from '@/views/teacher/ViewMaterii.vue';
+import EditExam from '@/views/secretariat/EditExam.vue';
 
 const routes = [
   {
@@ -75,6 +76,12 @@ const routes = [
         name: 'CreateExams',
         component: CreateExam,
         props: true, // Activează transmiterea route parameters ca prop-uri
+      },
+      {
+        path: 'edit_exam',
+        name: 'EditExam',
+        component: EditExam,
+     
       },
       {
         path: 'fill-request/:date?/:id?',

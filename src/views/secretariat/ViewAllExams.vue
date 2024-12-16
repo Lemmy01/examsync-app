@@ -2,20 +2,16 @@
 import Card from '@/components/Card.vue';
 import axiosInstance from '@/axios';
 
-import RefuzeExam from '@/components/RefuzeExam.vue';
 
 export default {
   name: 'ViewAllExams',
   components: {
     Card,
-    RefuzeExam
   },
-
   data() {
     return {
       dropdownItems: [], // Data for v-autocomplete dropdown
       items: [], // Data for the card list
-      dialogVisible: false,
       isLoading: false,
       selectedValue: null,
       promotionStatus: null,
@@ -61,6 +57,12 @@ export default {
             data: request.data[i].data,
             oraStart: request.data[i].orastart,
             oraStop: request.data[i].orafinal,
+            numeSala: request.data[i].sala.nume,
+            idSala: request.data[i].sala.id,
+            profesorid: request.data[i].profesorid,
+            assistantId: request.data[i].asistent.id,
+            assistantName: request.data[i].asistent.nume,
+            sefid: student.id,
            });
          }
             console.log(request.data);
@@ -69,10 +71,28 @@ export default {
             this.items = []; // Clear items if there's an error
         } 
      },
-  
-     handleCardClick() {
-      this.dialogVisible = true;
-    },
+      handleCardClick(item) {
+        const data = {
+          data: item.data,
+          oraStart: item.oraStart,
+          oraStop: item.oraStop,
+          profesorid: item.profesorid,
+          numeSala: item.numeSala,
+          idSala: item.idSala,
+          assistantId: item.assistantId, 
+          assistantName: item.assistantName,
+          sefid: item.sefid,
+        };
+        console.log(item);
+
+        const query = {
+          id: item.id,
+          data: JSON.stringify(data), // Convert object to JSON string
+        };
+
+  this.$router.push({ name: 'EditExam', query });
+}
+
   },
 };
 </script>
@@ -124,12 +144,11 @@ export default {
              :title="item.numeMaterie"
               :subtitle="item.numeElev"
               :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"
-              :buton-name="'Delete'"
+              :buton-name="'Edit'"
               :showButton='true'
-             @card-click="handleCardClick"
+             @card-click="handleCardClick(item)"
             />       
-            <RefuzeExam v-model="dialogVisible" :id="item.id" :is-teacher="false"
-            />    
+            
             </v-col>
           </v-row>
           <v-alert v-if="promotionStatus" type="info" class="mt-3">

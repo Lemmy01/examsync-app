@@ -16,7 +16,7 @@ export default {
       items: [], // Initialize items as an empty array
       dialogVisible: false, // Manage dialog visibility
       isLoading: true, // Track loading state
-
+      noData: false,
     };
   },
   async created(){
@@ -27,7 +27,8 @@ export default {
     handleCardClick(data,id) {
       this.$router.push({ name: 'FillRequests',params: { date: data ,id: id}  });
     },
-    async fetchData() {
+    async fetchData() {      this.noData = false;
+
       this.isLoading = true;
       try {
         const authToken = localStorage.getItem('authToken');
@@ -36,7 +37,7 @@ export default {
         console.log(id);
         const response = await axiosInstance.get('/examen/programate/' + id);
         console.log(response.data);
-      
+       
        for( var i = 0; i < response.data.length; i++ )
          {
             const student = await response.data[i].sef;
@@ -51,6 +52,9 @@ export default {
            });
          }
           
+         if(this.items.length === 0) {
+          this.noData = true;
+        }
      
          
       } catch (error) {
@@ -82,7 +86,7 @@ export default {
         </v-row>
       </v-container>
  
-      <v-container v-if="!isLoading">
+      <v-container v-if="!isLoading && !noData">
         <v-row>
           <v-col
             v-for="item in items"
@@ -95,6 +99,15 @@ export default {
               :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"      
               :buton-name="'Check out'"             
             />
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-container v-if="!isLoading && noData">
+        <v-row>
+          <v-col>
+            <p class="font-weight-black">
+              No exams available
+              </p>
           </v-col>
         </v-row>
       </v-container>

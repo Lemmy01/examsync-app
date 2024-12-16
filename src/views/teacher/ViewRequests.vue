@@ -15,7 +15,8 @@ export default {
     return {
       items: [], // Initialize items as an empty array
       dialogVisible: false, // Manage dialog visibility
-      isLoading: true, // Track loading state
+      isLoading: true, // Track loading state    
+      noData: false,
     };
   },
 
@@ -30,6 +31,7 @@ export default {
     },
 
     async fetchData() {
+      this.noData = false;
       this.isLoading = true;
       try {
         const authToken = localStorage.getItem('authToken');
@@ -47,6 +49,10 @@ export default {
             id: response.data[i].id,
             data: response.data[i].data,
           });
+        }
+
+        if(this.items.length === 0) {
+          this.noData = true;
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -123,6 +129,17 @@ export default {
           </v-col>
         </v-row>
       </v-container>
+
+      <v-container v-if="!isLoading && noData">
+        <v-row>
+          <v-col>
+            <p class="font-weight-black" style="text-align: center">
+              No requests available
+              </p>
+          </v-col>
+        </v-row>
+      </v-container>
+
     </v-main>
   </v-app>
 </template>

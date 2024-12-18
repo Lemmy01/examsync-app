@@ -35,8 +35,9 @@ export default {
       try {
         this.items = [];
         const id = localStorage.getItem('id');
+        console.log(`/examen/studentdupastare/${id}/${this.stare.toLocaleLowerCase()}`);
         const response = await axiosInstance.get(`/examen/studentdupastare/${id}/${this.stare.toLocaleLowerCase()}`);
-        console.log(response.data);
+       
        for( var i = 0; i < response.data.length; i++ )
          {
             const student = await response.data[i].sef;
@@ -83,8 +84,7 @@ export default {
         </v-row>
       </v-container>
 
-      <!-- Filter Dropdown -->
-      <v-container v-if="!isLoading && !noData">
+      <v-container v-if="!isLoading">
         <v-row justify="end" class="mb-4">
           <v-col cols="auto">
             <v-select
@@ -98,6 +98,9 @@ export default {
             />
           </v-col>
         </v-row>
+      </v-container>
+      <!-- Filter Dropdown -->
+      <v-container v-if="!isLoading && !noData">
 
         <!-- Items List -->
         <v-row>

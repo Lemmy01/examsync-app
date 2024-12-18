@@ -8,7 +8,7 @@
           <v-col cols="12" md="6">
             <v-text-field
               v-model="searchQuery"
-              label="Search by name or department"
+              label="Search by name"
               outlined
               clearable
               append-icon="mdi-magnify"

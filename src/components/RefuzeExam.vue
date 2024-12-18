@@ -63,7 +63,7 @@ export default defineComponent({
           console.log(response.status);
           if (response.status === 200 || response.status === 201) {
          
-            this.closeDialog();
+            this.$router.push({ name: 'ViewRequests' });
           }
         } catch (error) {
           console.error('Error submitting form:', error);

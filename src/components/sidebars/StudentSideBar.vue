@@ -29,13 +29,13 @@
 
         <template v-if="type === 'sef'">
           <v-list-item
-        prepend-icon="mdi-account-multiple"
+        prepend-icon="mdi-human-male-board"
         title="View Teachers"
         value="view_teachers"
         to="/teachers"
       ></v-list-item>
       <v-list-item
-        prepend-icon="mdi-star"
+        prepend-icon="mdi-clipboard-text-multiple"
         title="View Exams"
         value="view_exams"
         to="/exams"
@@ -51,19 +51,19 @@
         to="/view_requests"
        ></v-list-item>
       <v-list-item
-        prepend-icon="mdi-account-multiple"
+        prepend-icon="mdi-human-male-board"
         title="View Assistents"
         value="view_asistenti"
         to="/view_assistents"
       ></v-list-item>
       <v-list-item
-        prepend-icon="mdi-account-multiple"
+        prepend-icon="mdi-clipboard-text-multiple"
         title="View Exams"
         value="view_exams"
         to="/view_approved_exams"
       ></v-list-item>
       <v-list-item
-        prepend-icon="mdi-account-multiple"
+        prepend-icon="mdi-book-open"
         title="View Materii"
         value="view_materii"
         to="/view_materii"
@@ -72,23 +72,23 @@
 
         <template v-else-if="type === 'secretar'">
           <v-list-item
-        prepend-icon="mdi-account-multiple"
-        title="Create Teacher"
-        value="create_teacher"
-        to="/create_teachers"
-      ></v-list-item>
-      <v-list-item
-        prepend-icon="mdi-account-multiple"
-        title="Create Students"
-        value="create_students"
-        to="/create_students"
-      ></v-list-item>
-      <v-list-item
-        prepend-icon="mdi-account-multiple"
-        title="View Exams"
-        value="view_all_exams"
-        to="/view_all_exams"
-      ></v-list-item>
+            prepend-icon="mdi-human-male-board"
+            title="Create Teacher"
+            value="create_teacher"
+            to="/create_teachers"
+          ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-account-multiple"
+            title="Create Students"
+            value="create_students"
+            to="/create_students"
+          ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-clipboard-text-multiple"
+            title="View Exams"
+            value="view_all_exams"
+            to="/view_all_exams"
+          ></v-list-item>
         </template>
 
         <!-- Logout Button (common for all users) -->

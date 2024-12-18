@@ -80,37 +80,7 @@
 import Card from '@/components/Card.vue';
 import DialogForm from '@/components/DialogForm.vue';
 import axiosInstance from '@/axios';
-// export default {
-//   data() {
-//     return {
-//       isLoading: true, // Simulate loading state
-//       searchQuery: "", // Data binding for search field
-//       items: [
-//         // Example items
-//         { id: 1, nume: "John Doe", departament: "Math", telefon: "123456789", dialogVisible: false },
-//         { id: 2, nume: "Jane Smith", departament: "Physics", telefon: "987654321", dialogVisible: false },
-//         // Add more items as needed
-//       ],
-//     };
-//   },
-//   computed: {
-//     filteredItems() {
-//       // Filter items based on search query
-//       const query = this.searchQuery.toLowerCase();
-//       return this.items.filter(
-//         (item) =>
-//           item.nume.toLowerCase().includes(query) ||
-//           item.departament.toLowerCase().includes(query)
-//       );
-//     },
-//   },
-//   mounted() {
-//     // Simulate API loading delay
-//     setTimeout(() => {
-//       this.isLoading = false;
-//     }, 1000);
-//   },
-// };
+
 export default {
   name: 'TeacherPage',
   components: {
@@ -154,9 +124,14 @@ export default {
     async fetchData() {
       this.noData = false;
       this.isLoading = true;
+      const id = localStorage.getItem("id");
       try {
-        const response = await axiosInstance.get('/profesor');
-        
+        const user = await axiosInstance.get(`/user/info/${id}`);
+
+     
+
+        const response = await axiosInstance.get(`/profesor/profesoriancurent/${user.data.idgrupa}`);
+        console.log(response.data);
         // Initialize items with dialogVisible set to false for each item
        this.allItems=this.items = response.data.map((profesor) => ({
           ...profesor,

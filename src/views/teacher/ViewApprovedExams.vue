@@ -42,6 +42,7 @@ export default {
          {
             const student = await response.data[i].sef;
             const materie = response.data[i].materie;
+            const sala = response.data[i].sala;
            this.items.push({
             numeMaterie: materie.nume,
             numeElev: student.nume,
@@ -49,6 +50,7 @@ export default {
             data: response.data[i].data,
             oraStart: response.data[i].orastart,
             oraStop: response.data[i].orafinal,
+            numeSala: sala.nume,
            });
          }
           
@@ -95,7 +97,7 @@ export default {
           >
             <Card
               :title="item.numeMaterie"
-              :subtitle="item.numeElev"
+              :subtitle="item.numeSala"
               :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"      
               :buton-name="'Check out'"             
             />

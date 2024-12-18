@@ -49,6 +49,7 @@ export default {
             data: response.data[i].data,
             oraStart: response.data[i].orastart,
             oraStop: response.data[i].orafinal,
+            numeSala: this.stare === "Approved" ? response.data[i].sala.nume : '',
            });
          }
           
@@ -111,7 +112,7 @@ export default {
           >
             <Card   
               :title="item.numeMaterie"
-              :subtitle="item.numeElev"
+              :subtitle="this.stare =='Approved'? item.numeSala : item.numeElev"
               :description="this.stare !='Approved'?'' : `${item.data}  ${item.oraStart} - ${item.oraStop}`"         
             />
           </v-col>

@@ -1,35 +1,77 @@
-# proiect
+Proiect Vue 3 cu Vite și Vuetify
 
-This template should help get you started developing with Vue 3 in Vite.
+Acesta este un proiect construit cu Vue 3, Vite și Vuetify. Scopul acestui fișier README.md este de a ghida utilizatorii pentru a prelua, configura și rula proiectul local.
 
-## Recommended IDE Setup
+Prerechizite
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Pentru a lucra cu acest proiect, trebuie să aveți instalate următoarele:
 
-## Customize configuration
+Node.js (v16.0.0 sau mai recent)
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Git
 
-## Project Setup
+Pași pentru configurare
 
-```sh
+1. Clonarea proiectului
+
+Deschide terminalul și rulează următoarea comandă pentru a clona proiectul:
+
+git clone https://github.com/utilizator/numele-repozitoriu.git
+
+2. Navigarea în folderul proiectului
+
+Accesează directorul proiectului:
+
+cd numele-repozitoriu
+
+3. Instalarea dependențelor
+
+Rulează comanda:
+
 npm install
-```
 
-### Compile and Hot-Reload for Development
+Aceasta va instala toate pachetele necesare pentru a rula proiectul.
 
-```sh
+Rularea proiectului în dezvoltare
+
+După instalarea dependențelor, poți porni serverul de dezvoltare folosind comanda:
+
 npm run dev
-```
 
-### Compile and Minify for Production
+Serverul va porni pe un URL local (implicit: http://localhost:5173). Poți accesa aplicația în browser utilizând acest link.
 
-```sh
+Build pentru producție
+
+Pentru a genera o versiune pentru producție, folosește comanda:
+
 npm run build
-```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+Aceasta va crea un folder dist care conține fișierele optimizate pentru producție.
 
-```sh
-npm run test:unit
-```
+Depanare
+
+Dacă întâmpini probleme:
+
+Asigură-te că ai instalat corect Node.js și că versiunea este compatibilă.
+
+Rulează comanda npm install pentru a reinstala toate dependențele.
+
+Consultă log-urile din terminal pentru mesaje de eroare.
+
+Structura proiectului
+
+src/: Codul sursă al aplicației.
+
+public/: Resursele statice.
+
+vite.config.js: Configurația Vite.
+
+package.json: Lista dependențelor și scripturilor.
+
+Contribuții
+
+Orice contribuții sunt binevenite! Poți deschide un Issue sau crea un Pull Request.
+
+Licență
+
+Acest proiect este licențiat sub Licența MIT.

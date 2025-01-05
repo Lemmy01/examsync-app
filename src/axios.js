@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://ipgrupa4echipa1-b4acchb9bfcnfzfc.northeurope-01.azurewebsites.net/', // Replace with your API's base URL
+  baseURL: import.meta.env.API_URL, // Replace with your API's base URL
   headers: {
     'Content-Type': 'application/json',
   },

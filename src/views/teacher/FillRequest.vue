@@ -81,8 +81,12 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
           result.push(`${currentTime}`); // Adăugăm intervalul
           currentTime = nextTime; // Trecem la următoarea oră
         }
-
-        this.additionalData = result;
+        console.log(result);
+        //copy result in aditional data
+        for(var i = 0; i < result.length; i++){
+          this.additionalData.push(result[i]);
+        }
+     
     
       },
 
@@ -123,7 +127,7 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
         const response = await axiosInstance.get(`/sali/${selectedSalaId}/${this.date}`);
         for( var i = 0; i < response.data.length; i++ )
             {
-              this.additionalData.push(this.generateHourlyIntervalsForStart(response.data[i].ora_start,response.data[i].ora_end));
+              this.generateHourlyIntervalsForStart(response.data[i].ora_start,response.data[i].ora_end);
             }
       
         console.log('Data for selected sala:', response.data);
@@ -265,9 +269,9 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
   
             <!-- End Date Select -->
             <v-select
-              v-if="selectStartDate"
+              v-if="selectStartDate && !(additionalData.length === 0)"
               v-model="selectEndDate"
-              label="Select Erd Hour"
+              label="Select End Hour"
               :items="generatedIntervals"
               item-title="ora_end"
               clearable

@@ -1,8 +1,8 @@
-Proiect Vue 3 cu Vite și Vuetify
+# Proiect Vue 3 cu Vite și Vuetify
 
 Acesta este un proiect construit cu Vue 3, Vite și Vuetify. Scopul acestui fișier README.md este de a ghida utilizatorii pentru a prelua, configura și rula proiectul local.
 
-Prerechizite
+##  Prerechizite
 
 Pentru a lucra cu acest proiect, trebuie să aveți instalate următoarele:
 
@@ -10,19 +10,19 @@ Node.js (v16.0.0 sau mai recent)
 
 Git
 
-Pași pentru configurare
+##  Pași pentru configurare
 
 1. Clonarea proiectului
 
 Deschide terminalul și rulează următoarea comandă pentru a clona proiectul:
 
-git clone https://github.com/utilizator/numele-repozitoriu.git
+git clone https://github.com/Lemmy01/examsync-app
 
 2. Navigarea în folderul proiectului
 
 Accesează directorul proiectului:
 
-cd numele-repozitoriu
+cd examsync-app
 
 3. Instalarea dependențelor
 
@@ -32,7 +32,7 @@ npm install
 
 Aceasta va instala toate pachetele necesare pentru a rula proiectul.
 
-Rularea proiectului în dezvoltare
+##  Rularea proiectului în dezvoltare
 
 După instalarea dependențelor, poți porni serverul de dezvoltare folosind comanda:
 
@@ -40,7 +40,7 @@ npm run dev
 
 Serverul va porni pe un URL local (implicit: http://localhost:5173). Poți accesa aplicația în browser utilizând acest link.
 
-Build pentru producție
+##  Build pentru producție
 
 Pentru a genera o versiune pentru producție, folosește comanda:
 
@@ -48,7 +48,7 @@ npm run build
 
 Aceasta va crea un folder dist care conține fișierele optimizate pentru producție.
 
-Depanare
+##  Depanare
 
 Dacă întâmpini probleme:
 
@@ -67,11 +67,3 @@ public/: Resursele statice.
 vite.config.js: Configurația Vite.
 
 package.json: Lista dependențelor și scripturilor.
-
-Contribuții
-
-Orice contribuții sunt binevenite! Poți deschide un Issue sau crea un Pull Request.
-
-Licență
-
-Acest proiect este licențiat sub Licența MIT.

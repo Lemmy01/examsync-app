@@ -86,8 +86,6 @@ import RefuzeExam from '@/components/RefuzeExam.vue';
         for(var i = 0; i < result.length; i++){
           this.additionalData.push(result[i]);
         }
-     
-    
       },
 
       generateHourlyIntervals(start) {

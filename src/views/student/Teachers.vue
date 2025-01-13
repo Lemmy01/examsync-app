@@ -101,6 +101,8 @@ export default {
   },
   methods: {
     performSearch() {
+      // De exemplu, într-un fișier Vue sau într-un fișier JS
+
       this.noData = false;
       if(this.searchQuery === '') {
         return;
@@ -131,7 +133,7 @@ export default {
      
 
         const response = await axiosInstance.get(`/profesor/profesoriancurent/${user.data.idgrupa}`);
-        console.log(response.data);
+        console.log(response);
         // Initialize items with dialogVisible set to false for each item
        this.allItems=this.items = response.data.map((profesor) => ({
           ...profesor,

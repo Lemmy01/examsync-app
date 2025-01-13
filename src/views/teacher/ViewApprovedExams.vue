@@ -34,9 +34,7 @@ export default {
         const authToken = localStorage.getItem('authToken');
         const teacher = jwtDecode(authToken);
         const id = teacher.id;
-        console.log(id);
         const response = await axiosInstance.get('/examen/programate/' + id);
-        console.log(response.data);
        
        for( var i = 0; i < response.data.length; i++ )
          {
@@ -51,6 +49,7 @@ export default {
             oraStart: response.data[i].orastart,
             oraStop: response.data[i].orafinal,
             numeSala: sala.nume,
+            grupa: student.grupa,
            });
          }
           
@@ -97,9 +96,11 @@ export default {
           >
             <Card
               :title="item.numeMaterie"
-              :subtitle="item.numeSala"
+              :subtitle="item.numeSala + ' ' + item.grupa"
               :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"      
-              :buton-name="'Check out'"             
+              :buton-name="'Edit'" 
+              :showButton="true"   
+
             />
           </v-col>
         </v-row>

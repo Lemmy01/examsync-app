@@ -1,89 +1,83 @@
   
   <script>
   import axiosInstance from '@/axios';
+import RefuzeExam from '@/components/RefuzeExam.vue';
   
   export default {
-    name: 'CreateExam',
+    name: 'EditExam',
     props: {
-      id: {
+       id:{
         type: String,
-        required: true,
-      },
+        required: false,
+       } 
+    },
+    components: {
+      RefuzeExam,
     },
     watch: {
-      selectedClass(newValue) {
-      console.log(newValue);
+    selectedClass(newValue) {
       this.onSalaChange(newValue);
+      },
     },
-  },
+    async created(){
+      await  this.fetchData();
+    },
     emits: ['update:modelValue', 'submit'],
     data() {
       return {
+        dialogVisible: false, // Manage dialog visibility
         selectedClass: null,
         selectedAsistent: null,
-        selectedMaterie: null,
         selectStartDate: null,
         selectEndDate: null,
         assistents: [],
         sali: [],
-        grupe: [], // Data for v-autocomplete dropdown
-        materii: [],
-        selectedDate: null,
         loading: false,
         validationError: '',
         dataFetched: false, // Track if data has been fetched to prevent redundant calls
         additionalData: [],
         generatedIntervals: [],
-        selectedGrupa: null,
         dropdownItems: [], // Data for v-autocomplete dropdown
         items: [], // Data for v-autocomplete dropdown
       };
     },
-    created() {
-      this.fetchData();
-    },
     methods: {
+      async fetchData() {
+        this.loading = true;
+        try {
+      
+          const response = await axiosInstance.get(`/examen/${id}`);
+          for( var i = 0; i < response.data.length; i++ )
+            {
+             
+            }
+          this.dataFetched = true; // Mark data as fetched
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          this.items = [];
+        } finally {
+          this.loading = false;
+        }
+      },
       async fetchAssistenti() {
         this.loading = true;
-        try {             
-      
-          const id =this.id;
-          const postData ={
+        try {            
+          this.assistents= [];   
+          const id =localStorage.getItem('id');
+
+          const data = {
             "profesorid": id,
-            "data": this.selectedDate,
+            "data": this.date,
             "orastart": this.selectStartDate,
             "orafinal": this.selectEndDate
           }
-          const request =await axiosInstance.post(`/examen/asistentdisponibil` ,postData);         
+          console.log(data);
+          const request =await axiosInstance.post('/examen/asistentdisponibil',data);         
      
           for( var i = 0; i < request.data.length; i++ )
             {
               this.assistents.push(request.data[i]);
             }
-
-        } catch (error) {
-         console.error('Error fetching data:', error);
-          this.items = [];
-        } finally {
-          this.loading = false;
-
-        }
-      },
-
-      async fetchData() {
-        this.loading = true;
-        try {             
-      
-          const id =this.id;
-
-          const request1 =await axiosInstance.get('/materii/' + id);         
-          console.log(request1.data)
-          for( var i = 0; i < request1.data.length; i++ )
-            {
-              this.materii.push(request1.data[i]);
-            }
-  
-
           this.dataFetched = true; // Mark data as fetched
 
         } catch (error) {
@@ -94,33 +88,7 @@
 
         }
       },
-
-      async fetchGrupe(newSelectedValue) {
-        this.grupe = [];
-        if (!newSelectedValue) {
-            return;
-        }
-        try {
-            const request = await axiosInstance.get(`/grupe/${newSelectedValue}`);
-            this.grupe = request.data; // Update the items with the fetched data
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            this.grupe = []; // Clear items if there's an error
-        } 
-     },
-
-     convertToIsoDate() {
-    // Parsează data folosind obiectul Date
-    const date = new Date(this.selectedDate);
-
-    // Formatează în YYYY-MM-DD
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Luna începe de la 0
-    const day = String(date.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-  },
-  generateHourlyIntervalsForStart(start,endTime) {
+      generateHourlyIntervalsForStart(start,endTime) {
 
         const result = [];
         let currentTime = start;
@@ -129,23 +97,29 @@
           result.push(`${currentTime}`); // Adăugăm intervalul
           currentTime = nextTime; // Trecem la următoarea oră
         }
-
-        this.additionalData = result;
-    },
+        console.log(result);
+        //copy result in aditional data
+        for(var i = 0; i < result.length; i++){
+          this.additionalData.push(result[i]);
+        }
+     
+    
+      },
 
       generateHourlyIntervals(start) {
-          const interval = [];
-          var poz = this.additionalData.findIndex(item => item === start);
+        const interval = [];
+        var poz = this.additionalData.findIndex(item => item === start);
+       
 
-          console.log(poz); 
-          for(var i = poz + 1; i < this.additionalData.length; i++){
-            interval.push(this.additionalData[i]);
-          }
-          if (!interval) return;
-
-          this.generatedIntervals = interval;
-
+        for(var i = poz + 1; i < this.additionalData.length; i++){
+          interval.push(this.additionalData[i]);
+        }
+        if (!interval) return;
+      
+        this.generatedIntervals = interval;
+    
       },
+
      addMinutesToTime(timeString, minutesToAdd) {
         const [hours, minutes] = timeString.split(':').map(Number);
         const totalMinutes = hours * 60 + minutes + minutesToAdd;
@@ -154,7 +128,7 @@
         return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
       },
 
-    async onSalaChange(selectedSalaId) {  
+      async onSalaChange(selectedSalaId) {  
       if (!selectedSalaId) {
         this.additionalData = [];
         return;
@@ -165,12 +139,11 @@
       this.generatedIntervals = [];
 
       this.loading = true;
-      console.log(this.convertToIsoDate())
       try {
-        const response = await axiosInstance.get(`/sali/${selectedSalaId}/${this.convertToIsoDate()}`);
+        const response = await axiosInstance.get(`/sali/${selectedSalaId}/${this.date}`);
         for( var i = 0; i < response.data.length; i++ )
             {
-              this.additionalData.push(this.generateHourlyIntervalsForStart(response.data[i].ora_start,response.data[i].ora_end));
+              this.generateHourlyIntervalsForStart(response.data[i].ora_start,response.data[i].ora_end);
             }
       
         console.log('Data for selected sala:', response.data);
@@ -190,6 +163,7 @@
       try {
         const request = await axiosInstance.get(`/sali/dupanume/${newSelectedValue}`);
         this.dropdownItems = request.data; // Update the items with the fetched data
+       
       } catch (error) {
         console.error("Error fetching data:", error);
         this.dropdownItems = []; // Clear items if there's an error
@@ -200,7 +174,8 @@
         this.validationError = '';
   
         if (!this.selectedAsistent) {
-          this.validationError = 'Please select a assistent.';
+          this.validationError = 'Please select a assistent.'; 
+
           return;
         }
         if (!this.selectedClass) {
@@ -215,51 +190,38 @@
           this.validationError = 'Please select a end hour.';
           return;
         }
-        if (!this.selectedDate) {
-          this.validationError = 'Please select a date.';
-          return;
-        }
   
         this.loading = true;
         const idUtilizator = localStorage.getItem('id');
-     
-        const formData = 
-          {
-          "profesorid": this.id,
-          "grupaid": this.selectedGrupa,
-          "materieid": this.selectedMaterie,
-          "data": this.convertToIsoDate(this.selectedDate),
-          "asistentid": this.selectedAsistent,
-          "orastart": this.selectStartDate,
-          "orafinal": this.selectEndDate,
-          "actualizatde": idUtilizator,
-          "salaid":  this.selectedClass
-        }
-         
-        console.log(formData)
+        const formData = {
+            id: this.id,
+            asistentid: this.selectedAsistent,
+            orastart: this.selectStartDate,
+            orafinal: this.selectEndDate,
+            actualizatde: idUtilizator,
+            salaid: this.selectedClass
+          }
+
         try {
-          const response = await axiosInstance.post('/examen/examenfortat', formData);
+          const response = await axiosInstance.put('/profesor/acceptaexamen', formData);
           console.log(response.status);
           if (response.status === 200 || response.status === 201) {
             this.$emit('submit', formData);
-            this.$router.push({ name: 'ViewAllExams' });
+            this.$router.push({ name: 'ViewRequests' });
           }
         } catch (error) {
-          if(error.response.status === 418){
-            console.error('Error submitting form:', error);
-            this.validationError = 'Group does not possess a group lider';
-          }else{
-            console.error('Error submitting form:', error);
-            this.validationError = 'Failed to submit the form. Please try again.';
-          }
+          console.error('Error submitting form:', error);
+          this.validationError = 'Failed to submit the form. Please try again.';
         } finally {
           this.loading = false;
         }
       },
   
       closeDialog() {
-        this.$router.push({ name: 'CreateTeachers' });
+        this.resetForm();
+        this.$router.push({ name: 'ViewRequests' });
       },
+    
   
       resetForm() {
         this.selectedDate = null;
@@ -301,31 +263,7 @@
                 ></v-progress-circular>
               </v-col>
             </v-row>
-            <v-row v-if="!loading" justify="center">
-              <v-col cols="auto">
-                <v-date-picker v-model="selectedDate" label="Select Date"></v-date-picker>
-              </v-col>
-            </v-row>
-            <!-- Asistent pick -->
-          
-            <v-select
-              v-model="selectedMaterie"
-              label="Select Materie"
-              :items="materii"
-              item-title="nume"
-              item-value="subjectId"
-              clearable
-            ></v-select>
-            <v-autocomplete
-                v-model="selectedGrupa"
-                clearable
-                label="Select Group"
-                :items="grupe"
-                item-title="nume"
-                item-value="id"
-                @update:search="fetchGrupe"
-                class="min-width-200" 
-              ></v-autocomplete>
+            
             <v-autocomplete
             v-model="selectedClass"
             clearable
@@ -340,32 +278,34 @@
             <v-select
               v-if="!(additionalData.length === 0)"
               v-model="selectStartDate"
-              label="Select Date"
+              label="Select Start Hour"
               :items="additionalData"
-              item-title="ora_start"
               clearable
               @update:modelValue="generateHourlyIntervals(selectStartDate)"
-                          ></v-select>
+            ></v-select>
   
             <!-- End Date Select -->
             <v-select
-              v-if="selectStartDate"
+              v-if="selectStartDate && !(additionalData.length === 0)"
               v-model="selectEndDate"
-              label="Select Date"
+              label="Select End Hour"
               :items="generatedIntervals"
               item-title="ora_end"
               clearable
               @update:modelValue="fetchAssistenti()"
+
             ></v-select>
+            <!-- Asistent pick -->
             <v-select
-              v-if="selectEndDate != null && selectStartDate != null && selectedDate != null"
               v-model="selectedAsistent"
               label="Select Assistent"
               :items="assistents"
               item-title="nume"
               item-value="id"
               clearable
+              v-if="selectStartDate !=null && selectEndDate !=null"
             ></v-select>
+  
             <!-- Error Message -->
             <v-alert v-if="validationError" type="error" class="mt-3">
               {{ validationError }}
@@ -374,10 +314,13 @@
   
           <v-card-actions>
             <v-row justify="end">
+              <v-btn color="error" text @click="dialogVisible = true" :disabled="loading">Reject</v-btn>
               <v-btn text @click="closeDialog" :disabled="loading">Cancel</v-btn>
               <v-btn color="primary" @click="submitForm" :loading="loading" :disabled="loading">Submit</v-btn>
             </v-row>
           </v-card-actions>
+          <RefuzeExam v-model="dialogVisible" :id="this.id"  :is-teacher="true"
+          />
         </v-card>
       </v-col>
     </v-row>

@@ -45,7 +45,7 @@ export default {
           const materie = response.data[i].materie;
           this.items.push({
             numeMaterie: materie.nume,
-            numeElev: student.nume,
+            numeGrupa: student.grupa,
             id: response.data[i].id,
             data: response.data[i].data,
           });
@@ -114,7 +114,7 @@ export default {
           >
             <Card
               :title="item.numeMaterie"
-              :subtitle="item.numeElev"
+              :subtitle="item.numeGrupa"
               :description="item.data"
               :buton-name="'Check out'"
               @card-click="handleCardClick(item.data, item.id)"

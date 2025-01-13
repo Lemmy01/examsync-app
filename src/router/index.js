@@ -89,6 +89,12 @@ const routes = [
         component: FillRequest,
         props: true, // Activează transmiterea route parameters ca prop-uri
       },
+      {
+        path: 'edit-request/:id?',
+        name: 'EditRequests',
+        component: FillRequest,
+        props: true, // Activează transmiterea route parameters ca prop-uri
+      },
       // Add more authenticated routes here
     ],
   },

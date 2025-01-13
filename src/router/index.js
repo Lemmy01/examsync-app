@@ -14,6 +14,7 @@ import CreateExam from '@/views/secretariat/CreateExam.vue';
 import ViewAllExams from '@/views/secretariat/ViewAllExams.vue';
 import ViewMaterii from '@/views/teacher/ViewMaterii.vue';
 import EditExam from '@/views/secretariat/EditExam.vue';
+import UpdateExam from '@/views/teacher/UpdateExam.vue';
 
 const routes = [
   {
@@ -92,7 +93,7 @@ const routes = [
       {
         path: 'edit-request/:id?',
         name: 'EditRequests',
-        component: FillRequest,
+        component: UpdateExam,
         props: true, // Activează transmiterea route parameters ca prop-uri
       },
       // Add more authenticated routes here

@@ -24,10 +24,12 @@ export default {
   },
  
   methods: {
-    handleCardClick(data,id) {
-      this.$router.push({ name: 'FillRequests',params: { date: data ,id: id}  });
+  
+    handleCardClick1(id) {
+      this.$router.push({ name: 'EditRequests',params: { id: id}  });
     },
-    async fetchData() {      this.noData = false;
+    async fetchData() {   
+         this.noData = false;
 
       this.isLoading = true;
       try {
@@ -41,16 +43,16 @@ export default {
             const student = await response.data[i].sef;
             const materie = response.data[i].materie;
             const sala = response.data[i].sala;
-           this.items.push({
-            numeMaterie: materie.nume,
-            numeElev: student.nume,
-            id: response.data[i].id,
-            data: response.data[i].data,
-            oraStart: response.data[i].orastart,
-            oraStop: response.data[i].orafinal,
-            numeSala: sala.nume,
-            grupa: student.grupa,
-           });
+            this.items.push({
+              numeMaterie: materie.nume,
+              numeElev: student.nume,
+              id: response.data[i].id,
+              data: response.data[i].data,
+              oraStart: response.data[i].orastart,
+              oraStop: response.data[i].orafinal,
+              numeSala: sala.nume,
+              grupa: student.grupa,
+            });
          }
           
          if(this.items.length === 0) {
@@ -99,7 +101,8 @@ export default {
               :subtitle="item.numeSala + ' ' + item.grupa"
               :description="item.data + ' ' + item.oraStart + ' - ' + item.oraStop"      
               :buton-name="'Edit'" 
-              :showButton="true"   
+              :showButton="true"  
+              @click="handleCardClick1(item.id)" 
 
             />
           </v-col>
